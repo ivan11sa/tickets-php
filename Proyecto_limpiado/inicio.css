@@ -1,0 +1,132 @@
+/* Estilos generales */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('background.webp') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 50px auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #007BFF;
+    font-size: 2rem;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.menu-item {
+    background-color: #007BFF;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background-color: #0056b3;
+}
+
+.cerrar-sesion {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 30px auto;
+    padding: 12px 20px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.cerrar-sesion:hover {
+    background-color: #a71d2a;
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .menu {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu-item {
+        width: 80%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    h1, h2 {
+        font-size: 1.5rem;
+    }
+
+    .menu {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .menu-item {
+        width: 90%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .cerrar-sesion {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1, h2 {
+        font-size: 1.3rem;
+    }
+
+    .menu-item {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .cerrar-sesion {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

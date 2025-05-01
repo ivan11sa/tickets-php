@@ -1,0 +1,186 @@
+/* ============ ESTILOS GENERALES ============ */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('background.webp') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+}
+
+/* ============ CONTENEDOR PRINCIPAL ============ */
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 50px auto;
+    background: rgba(255, 255, 255, 0.97);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Títulos */
+h2 {
+    color: #007BFF;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* ============ FORMULARIO ============ */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #f9f9f9;
+    transition: border 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border: 2px solid #007BFF;
+    outline: none;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* ============ BOTÓN PRINCIPAL ============ */
+.btn {
+    width: 100%;
+    max-width: 250px;
+    margin: 20px auto;
+    padding: 12px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+/* ============ BARRA FIJA INFERIOR ============ */
+.fixed-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #007BFF;
+    padding: 15px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25px;
+    gap: 10px;
+    color: white;
+    z-index: 1000;
+}
+
+.fixed-bar button {
+    background: white;
+    color: #007BFF;
+    border: none;
+    padding: 7px 11px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.fixed-bar button:hover {
+    background: #f0f0f0;
+}
+
+/* ============ COLORES PARA PRIORIDADES ============ */
+.Baja { background-color: rgb(38, 190, 38); }
+.Media { background-color: rgb(214, 152, 37); }
+.Alta  { background-color: rgb(189, 30, 30); }
+.Urgente { background-color: rgb(130, 20, 20); }
+
+/* ============ RESPONSIVIDAD ============ */
+@media (max-width: 1024px) {
+    .container {
+        width: 95%;
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+        padding-bottom: 40px;
+    }
+    
+    .form-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .fixed-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        gap: 5px;
+    }
+    
+    .fixed-bar button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 22px;
+    }
+    .container {
+        width: 100%;
+        padding: 15px;
+    }
+    .form-group label {
+        font-size: 16px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        font-size: 14px;
+    }
+    .btn {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
