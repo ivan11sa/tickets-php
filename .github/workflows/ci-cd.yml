@@ -15,15 +15,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Build Docker image
-        run: docker build -f Sánchez_Acuña_Iván_Proyecto_IAW/Dockerfile -t ivansan11/proyecto-php-nginx:${{ github.sha }} .
+        run: docker build -f Sánchez_Acuña_Iván_Proyecto_IAW/Dockerfile -t ivan11sa/proyecto-php-nginx:latest .
 
       - name: Run tests (optional, for PHP)
         run: |
-          docker run --rm ivansan11/proyecto-php-nginx:${{ github.sha }} php -l /var/www/html/index_test.php
+          docker run --rm ivan11sa/proyecto-php-nginx:latest php -l /var/www/html/index_test.php
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,4 +48,4 @@ jobs:
           echo "K8S_CA=$K8S_CA" >> $GITHUB_ENV
 
       - name: Deploy to Kubernetes
-        run: kubectl set image deployment/php-deployment php=ivansan11/proyecto-php-nginx:${{ github.sha }}
+        run: kubectl set image deployment/php-deployment php=ivan11sa/proyecto-php-nginx:latest
