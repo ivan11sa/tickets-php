@@ -25,7 +25,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Build Docker image
-        run: docker build -f Sánchez_Acuña_Iván_Proyecto_IAW/Dockerfile -t ivan11sa/proyecto-php-nginx:latest .
+        run: docker build -f Sánchez_Acuña_Iván_Proyecto_IAW/Dockerfile -t ivan11sa/proyecto-php-nginx:final .
 
       - name: Run tests (optional, for PHP)
         run: |
