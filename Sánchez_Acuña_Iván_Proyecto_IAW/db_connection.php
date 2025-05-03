@@ -3,10 +3,10 @@
 // Si la conexión falla, el usuario será redirigido a una página de error.
 
 //  Definimos los datos de conexión a la base de datos.
-$host = 'localhost';         // Servidor donde está la base de datos en XAMPP
+$host = 'mysql-service';         // Servidor donde está la base de datos en XAMPP
 $db = 'gestion_incidencias'; // Nombre de la base de datos que vamos a usar
 $user = 'root';              // Usuario de la base de datos 
-$password = '';              // Contraseña del usuario. En nuestro caso no la tenemos establecida. 
+$password = 'root';              // Contraseña del usuario. En nuestro caso no la tenemos establecida. 
 
 //  Creamos la conexión a la base de datos usando MySQL.
 $conn = new mysqli($host, $user, $password, $db);

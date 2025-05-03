@@ -11,23 +11,22 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+ /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+ /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+ /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `gestion_incidencias`
+-- Base de datos: `GESTION_INCIDENCIAS`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `comentarios`
+-- Estructura de tabla para la tabla `COMENTARIOS`
 --
 
-CREATE TABLE `comentarios` (
+CREATE TABLE `COMENTARIOS` (
   `ID_COMENTARIO` int(5) NOT NULL,
   `TEXTO` text NOT NULL,
   `FECHA_CREACION` datetime NOT NULL DEFAULT current_timestamp(),
@@ -36,12 +35,12 @@ CREATE TABLE `comentarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `comentarios`
+-- Volcado de datos para la tabla `COMENTARIOS`
 --
 
-INSERT INTO `comentarios` (`ID_COMENTARIO`, `TEXTO`, `FECHA_CREACION`, `ID_INCIDENCIA`, `ID`) VALUES
-(53, 'Tengo corregido hasta el apellido \'M\'', '2025-02-22 14:44:58', 61, 1),
-(54, 'Tengo corregido hasta el apellido \'S\'', '2025-02-22 14:46:18', 61, 1),
+INSERT INTO `COMENTARIOS` (`ID_COMENTARIO`, `TEXTO`, `FECHA_CREACION`, `ID_INCIDENCIA`, `ID`) VALUES
+(53, 'Tengo corregido hasta el apellido ''M''', '2025-02-22 14:44:58', 61, 1),
+(54, 'Tengo corregido hasta el apellido ''S''', '2025-02-22 14:46:18', 61, 1),
 (55, 'Hora de entregarlo', '2025-02-22 16:36:50', 54, 4),
 (56, 'Vigilar que lleven los proyectos al día', '2025-03-03 10:39:56', 69, 1),
 (57, 'Dificultades preguntadas', '2025-03-03 10:40:07', 69, 1),
@@ -51,10 +50,10 @@ INSERT INTO `comentarios` (`ID_COMENTARIO`, `TEXTO`, `FECHA_CREACION`, `ID_INCID
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `incidencias`
+-- Estructura de tabla para la tabla `INCIDENCIAS`
 --
 
-CREATE TABLE `incidencias` (
+CREATE TABLE `INCIDENCIAS` (
   `ID_INCIDENCIA` int(5) NOT NULL,
   `TITULO` varchar(200) NOT NULL,
   `DESCRIPCION` text NOT NULL,
@@ -66,10 +65,10 @@ CREATE TABLE `incidencias` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `incidencias`
+-- Volcado de datos para la tabla `INCIDENCIAS`
 --
 
-INSERT INTO `incidencias` (`ID_INCIDENCIA`, `TITULO`, `DESCRIPCION`, `FECHA_CREACION`, `NIVEL_PRIORIDAD`, `ESTADO`, `ID_PROVINCIA`, `ID`) VALUES
+INSERT INTO `INCIDENCIAS` (`ID_INCIDENCIA`, `TITULO`, `DESCRIPCION`, `FECHA_CREACION`, `NIVEL_PRIORIDAD`, `ESTADO`, `ID_PROVINCIA`, `ID`) VALUES
 (54, 'Proyecto de PHP.', 'Proyecto de gestión de incidencias en PHP', '2025-02-22 11:58:24', 'Urgente', 'Cerrada', 8, 4),
 (60, 'Examen ASO', 'Examen para el 6 de marzo', '2025-02-22 12:27:00', 'Media', 'Cerrada', 4, 4),
 (61, 'Corregir examenes', 'Corregir los exámenes de SRI.', '2025-02-22 13:00:38', 'Media', 'Cerrada', 1, 1),
@@ -84,19 +83,19 @@ INSERT INTO `incidencias` (`ID_INCIDENCIA`, `TITULO`, `DESCRIPCION`, `FECHA_CREA
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `provincias`
+-- Estructura de tabla para la tabla `PROVINCIAS`
 --
 
-CREATE TABLE `provincias` (
+CREATE TABLE `PROVINCIAS` (
   `ID_PROVINCIA` int(5) NOT NULL,
   `NOMBRE_PROVINCIA` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `provincias`
+-- Volcado de datos para la tabla `PROVINCIAS`
 --
 
-INSERT INTO `provincias` (`ID_PROVINCIA`, `NOMBRE_PROVINCIA`) VALUES
+INSERT INTO `PROVINCIAS` (`ID_PROVINCIA`, `NOMBRE_PROVINCIA`) VALUES
 (1, 'Almería'),
 (2, 'Cádiz'),
 (3, 'Córdoba'),
@@ -109,10 +108,10 @@ INSERT INTO `provincias` (`ID_PROVINCIA`, `NOMBRE_PROVINCIA`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `usuarios`
+-- Estructura de tabla para la tabla `USUARIOS`
 --
 
-CREATE TABLE `usuarios` (
+CREATE TABLE `USUARIOS` (
   `ID` int(5) NOT NULL,
   `NOMBRE` varchar(100) NOT NULL,
   `CORREO` varchar(100) NOT NULL,
@@ -121,10 +120,10 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `usuarios`
+-- Volcado de datos para la tabla `USUARIOS`
 --
 
-INSERT INTO `usuarios` (`ID`, `NOMBRE`, `CORREO`, `CONTRASENA`, `ADMIN`) VALUES
+INSERT INTO `USUARIOS` (`ID`, `NOMBRE`, `CORREO`, `CONTRASENA`, `ADMIN`) VALUES
 (1, 'Administrador', 'admin@example.com', '$2y$10$i1H5Qvl1sP.o8dHlGMq1XeIqb4o5cA0xRoCmaOlfnjB84qCToL2Lu', b'1'),
 (4, 'Guille', 'guille@example.com', '$2y$10$U4W3WA5NT9rIXRmCg/8./ePrkpaT9t.Kol2spAAFgVd/tyQxH.xV.', b'0'),
 (5, 'Pepe', 'pepe@example.com', '$2y$10$Rlqv53ERrvkH0ddAiVldgezVw02AF2TuO0nQiHxtANuni312FVhIS', b'0'),
@@ -134,37 +133,39 @@ INSERT INTO `usuarios` (`ID`, `NOMBRE`, `CORREO`, `CONTRASENA`, `ADMIN`) VALUES
 (12, 'ivan', 'ivan@example.com', '$2y$10$o7sr9LovBSfI/22LpF4UouO4cfXvZwxYOCjIlDTjV3Cdd2CpxuZge', b'0'),
 (14, 'África', 'africa@example.com', '$2y$10$0rtCVfrYXkpXdHZomXtWTOp9GMqzfH3nrI1DXPRK1HRzFqVMENY4m', b'0');
 
+-- --------------------------------------------------------
+
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `comentarios`
+-- Indices de la tabla `COMENTARIOS`
 --
-ALTER TABLE `comentarios`
+ALTER TABLE `COMENTARIOS`
   ADD PRIMARY KEY (`ID_COMENTARIO`),
   ADD KEY `ID_INCIDENCIA` (`ID_INCIDENCIA`),
   ADD KEY `ID` (`ID`);
 
 --
--- Indices de la tabla `incidencias`
+-- Indices de la tabla `INCIDENCIAS`
 --
-ALTER TABLE `incidencias`
+ALTER TABLE `INCIDENCIAS`
   ADD PRIMARY KEY (`ID_INCIDENCIA`),
   ADD KEY `ID_PROVINCIA` (`ID_PROVINCIA`),
   ADD KEY `ID` (`ID`);
 
 --
--- Indices de la tabla `provincias`
+-- Indices de la tabla `PROVINCIAS`
 --
-ALTER TABLE `provincias`
+ALTER TABLE `PROVINCIAS`
   ADD PRIMARY KEY (`ID_PROVINCIA`),
   ADD UNIQUE KEY `NOMBRE_PROVINCIA` (`NOMBRE_PROVINCIA`);
 
 --
--- Indices de la tabla `usuarios`
+-- Indices de la tabla `USUARIOS`
 --
-ALTER TABLE `usuarios`
+ALTER TABLE `USUARIOS`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `CORREO` (`CORREO`);
 
@@ -173,27 +174,27 @@ ALTER TABLE `usuarios`
 --
 
 --
--- AUTO_INCREMENT de la tabla `comentarios`
+-- AUTO_INCREMENT de la tabla `COMENTARIOS`
 --
-ALTER TABLE `comentarios`
+ALTER TABLE `COMENTARIOS`
   MODIFY `ID_COMENTARIO` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
--- AUTO_INCREMENT de la tabla `incidencias`
+-- AUTO_INCREMENT de la tabla `INCIDENCIAS`
 --
-ALTER TABLE `incidencias`
+ALTER TABLE `INCIDENCIAS`
   MODIFY `ID_INCIDENCIA` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
--- AUTO_INCREMENT de la tabla `provincias`
+-- AUTO_INCREMENT de la tabla `PROVINCIAS`
 --
-ALTER TABLE `provincias`
+ALTER TABLE `PROVINCIAS`
   MODIFY `ID_PROVINCIA` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `usuarios`
+-- AUTO_INCREMENT de la tabla `USUARIOS`
 --
-ALTER TABLE `usuarios`
+ALTER TABLE `USUARIOS`
   MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
@@ -201,20 +202,21 @@ ALTER TABLE `usuarios`
 --
 
 --
--- Filtros para la tabla `comentarios`
+-- Filtros para la tabla `COMENTARIOS`
 --
-ALTER TABLE `comentarios`
-  ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`ID_INCIDENCIA`) REFERENCES `incidencias` (`ID_INCIDENCIA`),
-  ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`ID`) REFERENCES `usuarios` (`ID`);
+ALTER TABLE `COMENTARIOS`
+  ADD CONSTRAINT `COMENTARIOS_ibfk_1` FOREIGN KEY (`ID_INCIDENCIA`) REFERENCES `INCIDENCIAS` (`ID_INCIDENCIA`),
+  ADD CONSTRAINT `COMENTARIOS_ibfk_2` FOREIGN KEY (`ID`) REFERENCES `USUARIOS` (`ID`);
 
 --
--- Filtros para la tabla `incidencias`
+-- Filtros para la tabla `INCIDENCIAS`
 --
-ALTER TABLE `incidencias`
-  ADD CONSTRAINT `incidencias_ibfk_1` FOREIGN KEY (`ID_PROVINCIA`) REFERENCES `provincias` (`ID_PROVINCIA`),
-  ADD CONSTRAINT `incidencias_ibfk_2` FOREIGN KEY (`ID`) REFERENCES `usuarios` (`ID`);
+ALTER TABLE `INCIDENCIAS`
+  ADD CONSTRAINT `INCIDENCIAS_ibfk_1` FOREIGN KEY (`ID_PROVINCIA`) REFERENCES `PROVINCIAS` (`ID_PROVINCIA`),
+  ADD CONSTRAINT `INCIDENCIAS_ibfk_2` FOREIGN KEY (`ID`) REFERENCES `USUARIOS` (`ID`);
+
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@@OLD_COLLATION_CONNECTION */;
