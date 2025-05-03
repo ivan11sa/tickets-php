@@ -38,10 +38,11 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v1
 
-    - name: Log in to Kubernetes
+    - name: Set up kubeconfig
       run: |
-        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }}
-        kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
+        echo "${{ secrets.K8S_CA }}" > $HOME/.kube/config
+        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
+        kubectl config set-credentials k8s-user --username=${{ secrets.K8S_USER }} --password=${{ secrets.K8S_PASSWORD }}
         kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
         kubectl config use-context k8s-context
         
