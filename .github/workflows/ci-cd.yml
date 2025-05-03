@@ -48,4 +48,4 @@ jobs:
           echo "K8S_CA=$K8S_CA" >> $GITHUB_ENV
 
       - name: Deploy to Kubernetes
-        run: kubectl set image deployment/php-deployment php=ivansan11/proyecto-php-nginx:latest
+        run: kubectl set image deployment/php-deployment php=ivan11sa/proyecto-php-nginx:final
