@@ -1,0 +1,9 @@
+# Ignorar archivos y directorios no necesarios
+.git
+*.md
+*.log
+node_modules
+tmp
+*.bak
+.DS_Store
+

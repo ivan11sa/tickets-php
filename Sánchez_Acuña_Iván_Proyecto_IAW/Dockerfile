@@ -1,5 +1,7 @@
+# Usa una imagen base oficial de PHP
 FROM php:8.2-fpm
 
+# Instala dependencias necesarias
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -10,11 +12,20 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Copia los archivos del proyecto al contenedor
 COPY . /var/www/html/
-COPY default.conf /etc/nginx/sites-available/default
-RUN chown -R www-data:www-data /var/www/html
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Copia la configuración de nginx y supervisord
+COPY ./Sánchez_Acuña_Iván_Proyecto_IAW/default.conf /etc/nginx/sites-available/default
+COPY ./Sánchez_Acuña_Iván_Proyecto_IAW/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+
+# Cambia los permisos para los archivos de proyecto
+RUN chown -R www-data:www-data /var/www/html
+
+# Expón el puerto 80
 EXPOSE 80
+
+
 
 CMD ["/usr/bin/supervisord"]
