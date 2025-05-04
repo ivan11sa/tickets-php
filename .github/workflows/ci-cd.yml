@@ -47,7 +47,7 @@ jobs:
         echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
     
         # Configurar kubectl para usar el certificado de la CA y el servidor K8S
-        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
+        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/ca.crt
     
         # Configurar las credenciales de Kubernetes con el token
         kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
