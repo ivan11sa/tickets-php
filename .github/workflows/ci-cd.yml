@@ -54,3 +54,15 @@ jobs:
         # Cambiar la imagen de nginx
         kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
         kubectl rollout status deployment/nginx-deployment
+  
+    - name: Log in to Kubernetes
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
+        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
+        kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
+        kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
+        kubectl config use-context k8s-context
+
+        # Validación de conexión con Kubernetes
+        kubectl get nodes
