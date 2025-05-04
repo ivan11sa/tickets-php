@@ -40,15 +40,10 @@ jobs:
 
     - name: Set up kubeconfig
       run: |
-        # Crear el directorio .kube si no existe
         mkdir -p $HOME/.kube
-        
-        # Escribir el kubeconfig completo con CA, token y contexto ya configurados
-        echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
-
-        # Validar conexión con el clúster
+        echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
         kubectl get nodes
-
+        
     - name: Deploy to Kubernetes
       run: |
         kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
