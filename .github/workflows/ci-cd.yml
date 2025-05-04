@@ -43,25 +43,13 @@ jobs:
         # Crear el directorio .kube si no existe
         mkdir -p $HOME/.kube
         
-        # Crear el archivo kubeconfig con el valor de K8S_CONFIG
+        # Escribir el kubeconfig completo con CA, token y contexto ya configurados
         echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
-    
-        # Configurar kubectl para usar el certificado de la CA y el servidor K8S
-        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} 
-    
-        # Configurar las credenciales de Kubernetes con el token
-        kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
-    
-        # Configurar el contexto de Kubernetes
-        kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
-        kubectl config use-context k8s-context
-    
-        # Validación de conexión con Kubernetes
+
+        # Validar conexión con el clúster
         kubectl get nodes
-    
+
     - name: Deploy to Kubernetes
       run: |
-        # Cambiar la imagen del despliegue en Kubernetes
         kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
         kubectl rollout status deployment/nginx-deployment
-#l
