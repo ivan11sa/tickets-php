@@ -16,9 +16,8 @@ RUN apt-get update && apt-get install -y \
 COPY . /var/www/html/
 
 # Copia la configuración de nginx y supervisord
-COPY ./Sánchez_Acuña_Iván_Proyecto_IAW/default.conf /etc/nginx/sites-available/default
-COPY ./Sánchez_Acuña_Iván_Proyecto_IAW/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+COPY ./default.conf /etc/nginx/sites-available/default
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Cambia los permisos para los archivos de proyecto
 RUN chown -R www-data:www-data /var/www/html
