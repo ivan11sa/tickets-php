@@ -64,3 +64,4 @@ jobs:
         # Cambiar la imagen del despliegue en Kubernetes
         kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
         kubectl rollout status deployment/nginx-deployment
+#l
