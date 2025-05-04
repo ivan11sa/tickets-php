@@ -40,29 +40,24 @@ jobs:
 
     - name: Set up kubeconfig
       run: |
-        echo "${{ secrets.K8S_CA }}" > $HOME/.kube/config
-        kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
-        kubectl config set-credentials k8s-user --username=${{ secrets.K8S_USER }} --password=${{ secrets.K8S_PASSWORD }}
-        kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
-        kubectl config use-context k8s-context
-        
-        # Validación de conexión con Kubernetes
-        kubectl get nodes
-        
-    - name: Deploy to Kubernetes
-      run: |
-        # Cambiar la imagen de nginx
-        kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
-        kubectl rollout status deployment/nginx-deployment
-  
-    - name: Log in to Kubernetes
-      run: |
-        mkdir -p $HOME/.kube
+        # Crear el archivo kubeconfig con el valor de K8S_CONFIG
         echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
+
+        # Configurar kubectl para usar el certificado de la CA y el servidor K8S
         kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
+
+        # Configurar las credenciales de Kubernetes con el token
         kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
+
+        # Configurar el contexto de Kubernetes
         kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
         kubectl config use-context k8s-context
 
         # Validación de conexión con Kubernetes
         kubectl get nodes
+        
+    - name: Deploy to Kubernetes
+      run: |
+        # Cambiar la imagen del despliegue en Kubernetes
+        kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
+        kubectl rollout status deployment/nginx-deployment
