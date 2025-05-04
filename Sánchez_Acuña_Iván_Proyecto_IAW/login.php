@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit">Iniciar Sesión</button>
         </form>
         
-        <p>¿Aún no estás registrado? <a href="registro.php">Crear usuario</a></p>
+        <p>¿Aún no estás registrado? - <a href="registro.php">Crear usuario</a></p>
     </div>
 </body>
 </html>
