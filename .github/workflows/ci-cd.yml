@@ -38,39 +38,27 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v1
 
-    - name: Verify and set up kubeconfig
+    - name: Set up kubeconfig
       run: |
-        # Verificar el directorio .kube
-        echo "Verificando si el directorio .kube existe:"
-        ls -l $HOME
-
         # Crear el directorio .kube si no existe
         mkdir -p $HOME/.kube
-
-        # Verificar nuevamente si el directorio se ha creado
-        echo "Verificando si el directorio .kube se ha creado:"
-        ls -l $HOME/.kube
         
         # Crear el archivo kubeconfig con el valor de K8S_CONFIG
         echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
-
-        # Verificar que el archivo kubeconfig fue creado correctamente
-        echo "Contenido del archivo .kube/config:"
-        cat $HOME/.kube/config
-
+    
         # Configurar kubectl para usar el certificado de la CA y el servidor K8S
         kubectl config set-cluster k8s-cluster --server=${{ secrets.K8S_SERVER }} --certificate-authority=$HOME/.kube/config
-
+    
         # Configurar las credenciales de Kubernetes con el token
         kubectl config set-credentials k8s-user --token=${{ secrets.K8S_TOKEN }}
-
+    
         # Configurar el contexto de Kubernetes
         kubectl config set-context k8s-context --cluster=k8s-cluster --user=k8s-user
         kubectl config use-context k8s-context
-
+    
         # Validación de conexión con Kubernetes
         kubectl get nodes
-        
+    
     - name: Deploy to Kubernetes
       run: |
         # Cambiar la imagen del despliegue en Kubernetes
