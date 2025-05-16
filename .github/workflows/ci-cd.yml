@@ -53,7 +53,7 @@ jobs:
         run: |
           TAG=$(cat image_tag.txt)
           kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:$TAG
-          kubectl rollout status deployment/nginx-deployment --timeout=90s
+          kubectl rollout status deployment/nginx-deployment --timeout=5m
 
       - name: Simple rollback if fails     
         if: failure()
