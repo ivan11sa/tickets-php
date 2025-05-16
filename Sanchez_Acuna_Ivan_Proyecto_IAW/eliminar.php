@@ -3,116 +3,99 @@
 // Archivo: eliminar_incidencias.php
 // Descripción: Permite a los usuarios eliminar incidencias
 // y sus comentarios asociados, siempre que el usuario haya
-// iniciado sesión. Incluye depuración para detectar
-// problemas en la consulta SQL.
+// iniciado sesión.
 // ===================================================
 
-session_start();                  // Inicia la sesión para usar $_SESSION
-require 'db_connection.php';      // Conexión a la base de datos
-require 'control.php';            // Control de accesos/funciones extra
+// 1) Bufferizar para que header() funcione pese a salidas
+if (!headers_sent()) {
+    ob_start();
+}
 
-// Verificar que el usuario esté logueado
+// 2) Iniciar sesión y cargar dependencias
+session_start();
+require 'db_connection.php';
+require 'control.php';
+
+// 3) Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php?error=Debes iniciar sesión.");
     exit();
 }
 
-// Obtener datos del usuario (ajusta nombres de tabla/campos según tu BD)
+// 4) Obtener datos del usuario
 $user_id = $_SESSION['user_id'];
 $stmtUser = $conn->prepare("SELECT * FROM USUARIOS WHERE ID = ?");
 $stmtUser->bind_param("i", $user_id);
 $stmtUser->execute();
-$resultUser = $stmtUser->get_result();
-$user = $resultUser->fetch_assoc();
+$user = $stmtUser->get_result()->fetch_assoc();
 $stmtUser->close();
 
-// Si no se encontró el usuario, redirigimos
 if (!$user) {
     header("Location: login.php?error=Usuario no encontrado en la BD.");
     exit();
 }
 
-// Determinar si es admin (opcional)
-$is_admin = $_SESSION['is_admin'] ?? 0;
-
-// Página de origen (a dónde regresar tras eliminar)
+// 5) Preparar origen de retorno
 $origen = $_POST['origen'] ?? $_SESSION['origen'] ?? "listar_incidencias.php";
 
-// Manejar las incidencias a eliminar
+// 6) Recoger IDs a eliminar
 if (isset($_POST['ids']) && is_array($_POST['ids']) && !empty($_POST['ids'])) {
-    // Convertir cada ID a entero y guardarlos en la sesión
     $_SESSION['ids_a_eliminar'] = array_map('intval', $_POST['ids']);
 }
 
-// Si no hay incidencias en la sesión, no podemos eliminar nada
-if (!isset($_SESSION['ids_a_eliminar']) || empty($_SESSION['ids_a_eliminar'])) {
+if (empty($_SESSION['ids_a_eliminar'])) {
     header("Location: $origen?error=No hay incidencias para eliminar.");
     exit();
 }
 
-// Guardamos los IDs en una variable para usarlos más adelante
 $ids = $_SESSION['ids_a_eliminar'];
+$placeholders = implode(',', array_fill(0, count($ids), '?'));
+$types = str_repeat('i', count($ids));
 
-// Si el usuario confirma la eliminación
+// 7) Si confirman eliminación
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirmar"])) {
 
-    // ================ Eliminar comentarios asociados ================
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    // 7.1) Eliminar comentarios asociados
     $sql_delete_comments = "DELETE FROM COMENTARIOS WHERE ID_INCIDENCIA IN ($placeholders)";
-
-    // -- DEPURACIÓN: imprime la consulta y los IDs --
-    echo "<pre>Consulta para comentarios: $sql_delete_comments</pre>";
-    echo "<pre>IDs a eliminar (comentarios): " . print_r($ids, true) . "</pre>";
-
     $stmt_comments = $conn->prepare($sql_delete_comments);
     if (!$stmt_comments) {
         die("Error preparando la consulta de comentarios: " . $conn->error);
     }
-
-    // Vinculamos parámetros (todos enteros)
-    $types = str_repeat("i", count($ids));
     $stmt_comments->bind_param($types, ...$ids);
-
-    // Ejecutamos
-    if (!$stmt_comments->execute()) {
-        die("Error al eliminar comentarios: " . $stmt_comments->error);
-    }
+    $stmt_comments->execute();
     $stmt_comments->close();
 
-    // ================ Eliminar las incidencias ================
+    // 7.2) Eliminar las propias incidencias
     $sql_delete_incidencias = "DELETE FROM INCIDENCIAS WHERE ID_INCIDENCIA IN ($placeholders)";
-
-    // -- DEPURACIÓN: imprime la consulta y los IDs --
-    echo "<pre>Consulta para incidencias: $sql_delete_incidencias</pre>";
-    echo "<pre>IDs a eliminar (incidencias): " . print_r($ids, true) . "</pre>";
-
     $stmt_incidencias = $conn->prepare($sql_delete_incidencias);
     if (!$stmt_incidencias) {
         die("Error preparando la consulta de incidencias: " . $conn->error);
     }
-
     $stmt_incidencias->bind_param($types, ...$ids);
-
-    if (!$stmt_incidencias->execute()) {
-        die("Error al eliminar incidencias: " . $stmt_incidencias->error);
-    }
+    $stmt_incidencias->execute();
     $stmt_incidencias->close();
 
-    // Limpiamos la sesión para que no se repita la eliminación
+    // 7.3) Limpiar y redirigir con éxito
     unset($_SESSION['ids_a_eliminar']);
-
-    // Redirigimos con mensaje de éxito
     header("Location: $origen?success=Incidencias eliminadas correctamente.");
+    // 7.4) Enviar buffer y salir
+    if (ob_get_length()) {
+        ob_end_flush();
+    }
     exit();
 }
 
-// Si el usuario cancela la eliminación
+// 8) Si cancelan eliminación
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancelar"])) {
     unset($_SESSION['ids_a_eliminar']);
     header("Location: $origen");
+    if (ob_get_length()) {
+        ob_end_flush();
+    }
     exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
