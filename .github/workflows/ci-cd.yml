@@ -2,49 +2,61 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: self-hosted
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # ✅ Última versión
+      - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3  # ✅ Última versión
+      - uses: docker/setup-buildx-action@v3
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v3  # ✅ Última versión
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build Docker image
-      run: |
-        docker build -f ./Dockerfile -t ivan11sa/proyecto-php-nginx:${{ github.sha }} .
-        docker push ivan11sa/proyecto-php-nginx:${{ github.sha }}
+      - name: Build & push image          
+        run: |
+          TAG=${{ github.sha }}
+          docker build -t ivan11sa/proyecto-php-nginx:$TAG .
+          docker tag  ivan11sa/proyecto-php-nginx:$TAG ivan11sa/proyecto-php-nginx:latest
+          docker push ivan11sa/proyecto-php-nginx:$TAG
+          docker push ivan11sa/proyecto-php-nginx:latest
+          echo $TAG > image_tag.txt                           # guarda la sha
+      - name: Save tag artefact (opcional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: image_tag
+          path: image_tag.txt
 
   deploy:
     runs-on: self-hosted
-    needs: build  
-
+    needs: build
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # ✅ Actualizado
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4           
+        with:
+          name: image_tag
+          path: .
 
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v3  # ✅ Última versión
+      - uses: azure/setup-kubectl@v3
 
-    - name: Set up kubeconfig
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
-        kubectl get nodes
-        
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:${{ github.sha }}
-        kubectl rollout status deployment/nginx-deployment
+      - name: Set up kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Update image & wait
+        id: rollout
+        run: |
+          TAG=$(cat image_tag.txt)
+          kubectl set image deployment/nginx-deployment nginx=ivan11sa/proyecto-php-nginx:$TAG
+          kubectl rollout status deployment/nginx-deployment --timeout=90s
+
+      - name: Simple rollback if fails     
+        if: failure()
+        run: |
+          echo "❌ Rollout failed. Reverting..."
+          kubectl rollout undo deployment/nginx-deployment
