@@ -16,7 +16,7 @@ if ($_SESSION['is_admin'] !== 1) {
 // Incluye los archivos necesarios para la conexión con la base de datos y el control de acceso
 require 'db_connection.php';
 require 'control.php';
-include 'session_warning.php';
+
 
 // Verifica si el usuario está autenticado y si tiene permisos de administrador
 if (!isset($_SESSION['user_id'])) {
@@ -211,6 +211,7 @@ while ($row = $result_alerta->fetch_assoc()) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+<?php include 'session_warning.php'; ?>
     <div class="container">
         <h2>Listado de Incidencias</h2>
 

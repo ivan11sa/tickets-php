@@ -10,7 +10,6 @@ header("Expires: 0"); // Proxies.
 // Incluye el archivo de conexión a la base de datos y el archivo que nos permite tener un sistema de control de uso y sesion activa.
 require 'db_connection.php';
 require 'control.php';
-include 'session_warning.php';
 
 // Verifica si el usuario ha iniciado sesión, si no, lo redirige a la página de inicio de sesión con un mensaje de error.
 if (!isset($_SESSION['user_id'])) {
@@ -150,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-
+<?php include 'session_warning.php'; ?>
 <div class="container">
     <h2>Crear Nueva Incidencia</h2>
 

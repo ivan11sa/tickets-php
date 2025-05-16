@@ -5,7 +5,6 @@ session_start();
 // Metemos los archivos que necesitamos para conectarnos a la base de datos y controlar accesos.
 require 'db_connection.php';
 require 'control.php';
-include 'session_warning.php';
 
 // Verificamos si el usuario está logueado Y si es administrador.
 // Si no cumple, lo mandamos de vuelta con un error.
@@ -56,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirmar"])) {
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<?php include 'session_warning.php'; ?>
     <div class="container">
         <h2>Confirmar Eliminación</h2>
         <p>⚠️ <strong>¡Atención!</strong> Estás a punto de eliminar este usuario.</p>

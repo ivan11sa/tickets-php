@@ -7,7 +7,6 @@ session_start(); // Necesario para manejar las variables de sesión.
 // Incluir los archivos necesarios para la conexión a la base de datos y el control de permisos.
 require 'db_connection.php'; // Archivo para conectar con la base de datos.
 require 'control.php'; // Archivo para manejar el control de acceso y permisos.
-include 'session_warning.php';
 
 // Verificar si el usuario tiene sesión activa y si es administrador. Solo el administrador puede hacer uso de esta función. 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
@@ -112,6 +111,7 @@ $stmt->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+<?php include 'session_warning.php'; ?>
     <div class="container">
         <h2>Gestión de Usuarios</h2>
 

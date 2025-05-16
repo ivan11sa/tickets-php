@@ -10,7 +10,6 @@
 session_start();                  // Inicia la sesión para usar $_SESSION
 require 'db_connection.php';      // Conexión a la base de datos
 require 'control.php';            // Control de accesos/funciones extra
-include 'session_warning.php';
 
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {
@@ -123,6 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancelar"])) {
     <link rel="stylesheet" href="css/styles1.css"> <!-- Ajusta tu CSS -->
 </head>
 <body>
+<?php include 'session_warning.php'; ?>
     <div class="container">
         <h2>Confirmar Eliminación</h2>
         <p>

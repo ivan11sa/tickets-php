@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // control.php se encarga de la lógica para controlar el acceso a la página.
 require 'db_connection.php';
 require 'control.php';
-include 'session_warning.php';
+
 
 // Verificamos si el usuario está autenticado. Si no lo está, redirigimos a la página de login.
 if (!isset($_SESSION['user_id'])) {
@@ -106,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['comentario'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+    <?php include 'session_warning.php'; ?>
     <div class="container">
         <h2>Detalles de la Incidencia</h2>
         <div class="details">

@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 //  Incluir los archivos necesarios para la conexión a la base de datos y control de sesión.
 require 'db_connection.php';
 require 'control.php';
-include 'session_warning.php';
+
 
 //  Verificar que la conexión a la base de datos esté establecida.
 if (!isset($conn)) {
@@ -62,6 +62,7 @@ $stmt->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+<?php include 'session_warning.php'; ?>
     <div class="container">
         <!-- Esta es una de las partes mas importantes del codigo, donde diferenciamos entre las funcionalidades a las que puede acceder el administrador
          o un usuario simple -->
