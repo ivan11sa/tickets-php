@@ -60,7 +60,7 @@ $horas = floor($tiempo_transcurrido / 3600);      //  Calcula las horas
 $minutos = floor(($tiempo_transcurrido % 3600) / 60); //  Calcula los minutos
 $segundos = $tiempo_transcurrido % 60;            //  Calcula los segundos
 
-//  Guardamos estos valores en la sesión para mostrarlos en el resto de pantallas una vez dentro del sistema. .
+//  Guardamos estos valores en la sesión para mostrarlos en el resto de pantallas una vez dentro del sistema. ...
 $_SESSION['horas'] = $horas;
 $_SESSION['minutos'] = $minutos;
 $_SESSION['segundos'] = $segundos;
