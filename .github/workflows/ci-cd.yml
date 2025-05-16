@@ -24,7 +24,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -f ./Sanchez_Acuna_Ivan_Proyecto_IAW/Dockerfile -t ivan11sa/proyecto-php-nginx:${{ github.sha }} .
+        docker build -f ./Dockerfile -t ivan11sa/proyecto-php-nginx:${{ github.sha }} .
         docker push ivan11sa/proyecto-php-nginx:${{ github.sha }}
 
   deploy:
