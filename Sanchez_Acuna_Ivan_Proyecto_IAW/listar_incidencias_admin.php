@@ -16,6 +16,7 @@ if ($_SESSION['is_admin'] !== 1) {
 // Incluye los archivos necesarios para la conexión con la base de datos y el control de acceso
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 // Verifica si el usuario está autenticado y si tiene permisos de administrador
 if (!isset($_SESSION['user_id'])) {

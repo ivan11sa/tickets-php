@@ -15,6 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 //  Incluir los archivos necesarios para la conexión a la base de datos y control de sesión.
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 //  Verificar que la conexión a la base de datos esté establecida.
 if (!isset($conn)) {

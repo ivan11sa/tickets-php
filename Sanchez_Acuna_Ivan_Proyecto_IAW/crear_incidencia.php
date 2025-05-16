@@ -10,6 +10,7 @@ header("Expires: 0"); // Proxies.
 // Incluye el archivo de conexión a la base de datos y el archivo que nos permite tener un sistema de control de uso y sesion activa.
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 // Verifica si el usuario ha iniciado sesión, si no, lo redirige a la página de inicio de sesión con un mensaje de error.
 if (!isset($_SESSION['user_id'])) {

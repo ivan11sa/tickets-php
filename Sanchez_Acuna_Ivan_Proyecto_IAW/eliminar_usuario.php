@@ -5,6 +5,7 @@ session_start();
 // Metemos los archivos que necesitamos para conectarnos a la base de datos y controlar accesos.
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 // Verificamos si el usuario está logueado Y si es administrador.
 // Si no cumple, lo mandamos de vuelta con un error.

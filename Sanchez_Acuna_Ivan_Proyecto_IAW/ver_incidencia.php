@@ -11,6 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // control.php se encarga de la lógica para controlar el acceso a la página.
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 // Verificamos si el usuario está autenticado. Si no lo está, redirigimos a la página de login.
 if (!isset($_SESSION['user_id'])) {

@@ -10,6 +10,7 @@
 session_start();                  // Inicia la sesión para usar $_SESSION
 require 'db_connection.php';      // Conexión a la base de datos
 require 'control.php';            // Control de accesos/funciones extra
+include 'session_warning.php';
 
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {

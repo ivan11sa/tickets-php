@@ -6,6 +6,7 @@ session_start(); // Iniciar sesión si no está iniciada.
 //  Incluir conexión a la base de datos y control de acceso.
 require 'db_connection.php';
 require 'control.php';
+include 'session_warning.php';
 
 // Verificar si el usuario ha iniciado sesión, si no, redirigir al login.
 if (!isset($_SESSION['user_id'])) {
