@@ -55,7 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirmar"])) {
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<?php include 'session_warning.php'; ?>
+
+<?php if (!empty($_SESSION['show_warning'])): ?>
+  <?php include 'session_warning.php'; ?>
+<?php endif; ?>
     <div class="container">
         <h2>Confirmar Eliminación</h2>
         <p>⚠️ <strong>¡Atención!</strong> Estás a punto de eliminar este usuario.</p>

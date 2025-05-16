@@ -1,23 +1,24 @@
 <?php
-// Este archivo gestiona el cierre de sesión y la eliminación de cookies de sesión.
+// logout.php
 
-session_start(); // Iniciar sesión si no está iniciada.
+// 1) Iniciamos la sesión (si no lo está)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Vacía completamente el array $_SESSION.
+// 2) Regeneramos ID para invalidar el antiguo
+session_regenerate_id(true);
+
+// 3) Limpiamos y destruimos
 $_SESSION = [];
-
-// Destruir la sesión completamente en el servidor.
+session_unset();
 session_destroy();
 
-// Eliminar la cookie de sesión en el navegador del usuario.
+// 4) Eliminamos cookie de sesión
 if (isset($_COOKIE[session_name()])) {
     setcookie(session_name(), '', time() - 42000, '/', '', false, true);
 }
 
-// Regenerar un nuevo ID de sesión en la próxima autenticación para evitar que al retroceder en la página se vuelva a entrar en la sesion.
-session_regenerate_id(true);
-
-// Redirigir al usuario a la página de inicio de sesión después de cerrar sesión.
-header("Location: login.php?success=Cierre de sesión exitoso.");
-exit();
-?>
+// 5) Redirigimos sin haber emitido nada antes
+header('Location: login.php?success=Cierre de sesión exitoso.');
+exit;

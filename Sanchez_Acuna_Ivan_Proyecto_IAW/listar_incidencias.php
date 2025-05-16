@@ -114,7 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_masivo'])) {
     <link rel="stylesheet" href="css/styles1.css">
 </head>
 <body>
-<?php include 'session_warning.php'; ?>
+
+<?php if (!empty($_SESSION['show_warning'])): ?>
+  <?php include 'session_warning.php'; ?>
+<?php endif; ?>
     <div class="container2">
         <h2>Mis Incidencias</h2>
 

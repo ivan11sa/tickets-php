@@ -149,7 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-<?php include 'session_warning.php'; ?>
+
+<?php if (!empty($_SESSION['show_warning'])): ?>
+  <?php include 'session_warning.php'; ?>
+<?php endif; ?>
 <div class="container">
     <h2>Crear Nueva Incidencia</h2>
 

@@ -5,7 +5,6 @@
 session_start(); // Iniciamos la sesión para ver si el usuario está logueado
 ob_start(); // Iniciamos el buffer de salida para evitar errores de redirección
 require 'db_connection.php'; // Incluimos la conexión a la base de datos
-include 'session_warning.php';
 require 'control.php';
 
 // Comprobamos si el usuario ha iniciado sesión, si no, lo mandamos al login
