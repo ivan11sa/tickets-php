@@ -120,40 +120,50 @@ if ($formato == 'csv') {
     fclose($output); // Cerramos el flujo de salida del CSV
     exit(); // Terminamos la ejecución del script para que no se agregue contenido adicional
 // Si el usuario eligió PDF, generamos el archivo PDF
-}elseif ($formato == 'pdf') {
-    ob_end_clean(); // Limpiamos el buffer de salida para evitar errores
-    require __DIR__ . '/fpdf186/fpdf.php'; // Importamos la librería FPDF para generar el PDF
-
-    $pdf = new FPDF('L', 'mm', 'A4'); // Creamos el objeto PDF en orientación horizontal, tamaño A4
-    $pdf->AddPage(); // Agregamos una nueva página
-    $pdf->SetFont('Arial', 'B', 10); // Establecemos la fuente del encabezado
-
-    // Definimos los encabezados de la tabla
-    $headers = ['ID', 'Título', 'Fecha Creación', 'Prioridad', 'Estado', 'Usuario', 'Provincia', 'Fecha de Cierre'];
-    $widths = [15, 60, 40, 30, 30, 30, 25, 40]; // Definimos el ancho de cada columna
-
-    // Agregamos los encabezados al PDF
-    foreach ($headers as $i => $header) {
-        $pdf->Cell($widths[$i], 10, utf8_decode($header), 1, 0, 'C');
+} elseif ($formato == 'pdf') {
+    // 1) Limpiar buffer para que FPDF no se queje
+    if (ob_get_length()) {
+        ob_end_clean();
     }
-    $pdf->Ln(); // Hacemos un salto de línea después del encabezado
 
-    // Configuramos la fuente para los datos
-    $pdf->SetFont('Arial', '', 9);
-    foreach ($incidencias as $incidencia) {
-        // Agregamos los datos en cada celda de la tabla
-        $pdf->Cell($widths[0], 10, $incidencia['ID_INCIDENCIA'], 1, 0, 'C');
-        $pdf->Cell($widths[1], 10, utf8_decode($incidencia['TITULO']), 1, 0, 'L');
-        $pdf->Cell($widths[2], 10, $incidencia['FECHA_CREACION'], 1, 0, 'C');
-        $pdf->Cell($widths[3], 10, $incidencia['NIVEL_PRIORIDAD'], 1, 0, 'C');
-        $pdf->Cell($widths[4], 10, $incidencia['ESTADO'], 1, 0, 'C');
-        $pdf->Cell($widths[5], 10, utf8_decode($incidencia['USUARIO']), 1, 0, 'L');
-        $pdf->Cell($widths[6], 10, utf8_decode($incidencia['PROVINCIA']), 1, 0, 'C');
-        $pdf->Cell($widths[7], 10, $incidencia['FECHA_CIERRE'], 1, 0, 'C');
+    // 2) Cargar FPDF
+    require __DIR__ . '/fpdf186/fpdf.php';
+    $pdf = new FPDF('L','mm','A4');
+    $pdf->AddPage();
+    $pdf->SetFont('Arial','B',10);
+
+    // 3) Cabeceras de la tabla
+    $headers = ['ID','Título','Fecha Creación','Prioridad','Estado','Usuario','Provincia','Fecha de Cierre'];
+    $widths  = [15,   60,           40,            30,         30,       30,          25,          40];
+
+    // 4) Pintar cabeceras (con iconv en lugar de utf8_decode)
+    foreach ($headers as $i => $h) {
+        $pdf->Cell(
+            $widths[$i],
+            10,
+            iconv('UTF-8','ISO-8859-1//TRANSLIT',$h),
+            1, 0, 'C'
+        );
+    }
+    $pdf->Ln();
+
+    // 5) Datos
+    $pdf->SetFont('Arial','',9);
+    foreach ($incidencias as $inc) {
+        $pdf->Cell($widths[0],10,$inc['ID_INCIDENCIA'],1,0,'C');
+        $pdf->Cell($widths[1],10, iconv('UTF-8','ISO-8859-1//TRANSLIT',$inc['TITULO']),      1,0,'L');
+        $pdf->Cell($widths[2],10, $inc['FECHA_CREACION'],                              1,0,'C');
+        $pdf->Cell($widths[3],10, $inc['NIVEL_PRIORIDAD'],                             1,0,'C');
+        $pdf->Cell($widths[4],10, $inc['ESTADO'],                                      1,0,'C');
+        $pdf->Cell($widths[5],10, iconv('UTF-8','ISO-8859-1//TRANSLIT',$inc['USUARIO']),    1,0,'L');
+        $pdf->Cell($widths[6],10, iconv('UTF-8','ISO-8859-1//TRANSLIT',$inc['PROVINCIA']),  1,0,'C');
+        $pdf->Cell($widths[7],10, $inc['FECHA_CIERRE'],                                 1,0,'C');
         $pdf->Ln();
     }
 
-    $pdf->Output(); // Generamos el archivo PDF y lo enviamos al navegador
+    // 6) Enviar el PDF ya limpio de warnings
+    $pdf->Output();
     exit();
 }
+
 ?>
