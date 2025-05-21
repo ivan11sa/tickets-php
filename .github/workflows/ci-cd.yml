@@ -8,9 +8,9 @@ env:
   IMAGE_NAME: ivan11sa/proyecto-php-nginx
 
 jobs:
-# ────────────────────────────── BUILD & PUSH ──────────────────────────────
+  
   build:
-    # usa ubuntu-latest a menos que tu runner self-hosted esté activo 24/7...
+  
     runs-on: self-hosted
     permissions:
       contents: read
