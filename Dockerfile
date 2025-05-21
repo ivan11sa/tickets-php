@@ -1,30 +1,27 @@
-# Usa una imagen base oficial de PHP
+# ---------- Dockerfile (corrigido) ----------
 FROM php:8.2-fpm
 
-# Instala dependencias necesarias
+# 1. Paquetes y extensiones
 RUN apt-get update && apt-get install -y \
-    nginx \
-    supervisor \
-    default-mysql-client \
-    default-libmysqlclient-dev \
+        nginx supervisor default-mysql-client default-libmysqlclient-dev \
     && docker-php-ext-install mysqli \
-    && docker-php-ext-enable mysqli \
-    && apt-get clean \
+    && docker-php-ext-enable  mysqli \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia los archivos del proyecto al contenedor
-COPY . /var/www/html/
+# 2. Directorios que Nginx necesita
+RUN mkdir -p /var/run /var/cache/nginx /var/log/nginx
 
-# Copia la configuración de nginx y supervisord
-COPY ./default.conf /etc/nginx/sites-available/default
-COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Cambia los permisos para los archivos de proyecto
+# 3. Código de la aplicación
+COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-# Expón el puerto 80
+# 4. Configuración
+#    Nginx leerá todos los ficheros en /etc/nginx/conf.d/
+COPY default.conf      /etc/nginx/conf.d/default.conf
+#    Supervisord arranca nginx + php-fpm
+COPY supervisord.conf  /etc/supervisor/conf.d/supervisord.conf
+
+# 5. Arranque
 EXPOSE 80
-
-
-
-CMD ["/usr/bin/supervisord", "-n"]
+CMD ["supervisord","-c","/etc/supervisor/conf.d/supervisord.conf"]
+# --------------------------------------------
