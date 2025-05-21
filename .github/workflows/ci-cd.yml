@@ -48,7 +48,7 @@ jobs:
           name: image_tag
           path: .
 
-      - uses: azure/setup-kubectl@v3          # instala kubectl 1.32.x
+      - uses: azure/setup-kubectl@v3         
 
       - name: Configure kubeconfig
         run: |
