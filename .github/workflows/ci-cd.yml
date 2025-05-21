@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: ivan11sa/proyecto-php-nginx
 
 jobs:
-  
+
   build:
   
     runs-on: self-hosted
@@ -38,9 +38,9 @@ jobs:
           name: image_tag
           path: image_tag.txt
 
-# ─────────────────────────────── DEPLOY ────────────────────────────────
+
   deploy:
-    runs-on: self-hosted          # idem; pon self-hosted si lo prefieres
+    runs-on: self-hosted          
     needs: build
     steps:
       - uses: actions/download-artifact@v4
