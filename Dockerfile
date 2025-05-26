@@ -21,6 +21,9 @@ COPY default.conf      /etc/nginx/conf.d/default.conf
 #    Supervisord arranca nginx + php-fpm
 COPY supervisord.conf  /etc/supervisor/conf.d/supervisord.conf
 
+# --- aquí eliminamos el site “por defecto” de Debian ---
+RUN rm -f /etc/nginx/sites-enabled/default
+
 # 5. Arranque
 EXPOSE 80
 CMD ["supervisord","-c","/etc/supervisor/conf.d/supervisord.conf"]
