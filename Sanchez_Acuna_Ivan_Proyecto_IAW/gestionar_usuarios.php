@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo permite a los administradores gestionar usuarios (crear, editar, cambiar roles, eliminar).
 
 // Iniciar la sesión para gestionar la autenticación del usuario.

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo maneja la modificación, eliminación y edición de incidencias en la base de datos.
 
 // Iniciar la sesión si aún no está iniciada.

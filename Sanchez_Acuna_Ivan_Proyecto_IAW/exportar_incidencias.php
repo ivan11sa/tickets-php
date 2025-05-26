@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo permite exportar las incidencias a formatos CSV o PDF.
 // Básicamente, toma los datos de la base de datos y los convierte en un archivo descargable
 

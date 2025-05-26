@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // 1) Buffer para evitar salidas antes de headers
 if (!headers_sent()) {
     ob_start();

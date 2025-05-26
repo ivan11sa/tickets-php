@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // ===================================================
 // Archivo: eliminar_incidencias.php
 // Descripción: Permite a los usuarios eliminar incidencias

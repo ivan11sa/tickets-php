@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo permite a los usuarios editar incidencias si tienen permiso para hacerlo.
 
 // Iniciar la sesión para manejar la autenticación del usuario.

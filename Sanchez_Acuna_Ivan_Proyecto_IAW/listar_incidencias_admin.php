@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Inicia la sesión para manejar variables de sesión y autenticación del usuario
 session_start();
 if (empty($_SESSION['is_admin']) || $_SESSION['is_admin'] !== 1) {

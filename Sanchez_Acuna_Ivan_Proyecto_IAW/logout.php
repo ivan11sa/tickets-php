@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // logout.php
 
 // 1) Iniciamos la sesión (si no lo está)

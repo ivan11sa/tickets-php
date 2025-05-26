@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo permite a los usuarios ver, filtrar, buscar y eliminar incidencias.
 
 //  Iniciar la sesión para manejar la autenticación.

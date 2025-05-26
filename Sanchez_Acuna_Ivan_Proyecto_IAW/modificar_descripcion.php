@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo permite modificar la descripción de incidencias seleccionadas.
 
 session_start(); // Iniciar sesión si no está iniciada.

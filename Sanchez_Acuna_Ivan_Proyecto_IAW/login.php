@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo gestiona el inicio de sesión de los usuarios.
 
 // Iniciar la sesión para autenticación del usuario.

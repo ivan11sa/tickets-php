@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Inicia la sesión para gestionar variables de sesión
 session_start();
 

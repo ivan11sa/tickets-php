@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo gestiona el acceso de los usuarios y muestra opciones según su rol.
 
 // Iniciar la sesión si no está iniciada.

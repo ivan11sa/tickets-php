@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Este archivo es el que se encarga de mostrar los detalles de una incidencia y permitir que los usuarios agreguen comentarios.
 
 // Primero, revisamos si la sesión ya ha sido iniciada. Si no está iniciada, la iniciamos.

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Arrancamos la sesión porque necesitamos saber quién está logueado.
 session_start();
 
