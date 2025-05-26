@@ -61,8 +61,8 @@ jobs:
       id: rollout
       run: |
         TAG=$(cat image_tag.txt)
-        kubectl -n "$K8S_NS" set image deployment/nginx-balancer   nginx-balancer=$REGISTRY/$IMAGE_NAME:$TAG
-        kubectl -n "$K8S_NS" set image deployment/php-fpm php-fpm=$REGISTRY/$IMAGE_NAME:$TAG
+        kubectl -n "$K8S_NS" set image deployment/nginx-balancer   nginxr=$REGISTRY/$IMAGE_NAME:$TAG
+        kubectl -n "$K8S_NS" set image deployment/php-deployment php=$REGISTRY/$IMAGE_NAME:$TAG
         kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer   --timeout=5m
         kubectl -n "$K8S_NS" rollout status deployment/php-deployment --timeout=5m
 
