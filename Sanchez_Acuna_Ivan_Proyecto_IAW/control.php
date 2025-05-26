@@ -46,7 +46,7 @@ $_SESSION['show_warning'] = $show_warning;
 // 8) Calcular tiempo transcurrido desde login
 $elapsed = time() - $_SESSION['session_start_time'];
 
-// variables locales disponibles para la vista:
+// variables locales disponibles para la vista:s
 $horas    = floor($elapsed / 3600);
 $minutos  = floor(($elapsed % 3600) / 60);
 $segundos = $elapsed % 60;
@@ -56,7 +56,7 @@ $_SESSION['horas']   = $horas;
 $_SESSION['minutos'] = $minutos;
 $_SESSION['segundos'] = $segundos;
 
-// 9) Enviar buffer si estaba abierto prueba
+// 9) Enviar buffer si estaba abierto pruebas
 if (ob_get_level()) {
     ob_end_flush();
 }
