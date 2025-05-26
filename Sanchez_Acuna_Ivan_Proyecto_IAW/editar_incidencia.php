@@ -113,8 +113,6 @@ while ($row = $result_provincias->fetch_assoc()) {
 
 $stmt_provincias->close();
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>

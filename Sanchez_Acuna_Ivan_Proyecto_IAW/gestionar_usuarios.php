@@ -100,7 +100,6 @@ $result = $stmt->get_result(); // Obtener los resultados de la consulta.
 $usuarios = $result->fetch_all(MYSQLI_ASSOC); // Guardar los usuarios en un array asociativo.
 $stmt->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>

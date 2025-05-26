@@ -51,7 +51,6 @@ if ($result->num_rows === 1) {
 //  Cerrar la consulta para liberar memoria.
 $stmt->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -96,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['comentario'])) {
     exit(); // Terminamos el script aquí para no continuar ejecutando más código innecesario.
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>

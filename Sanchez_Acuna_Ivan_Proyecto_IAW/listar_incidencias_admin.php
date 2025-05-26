@@ -1,6 +1,14 @@
 <?php
 // Inicia la sesión para manejar variables de sesión y autenticación del usuario
 session_start();
+if (empty($_SESSION['is_admin']) || $_SESSION['is_admin'] !== 1) {
+    header('Location: login.php?error=Acceso denegado');
+    exit();
+}
+
+// Incluye los archivos necesarios para la conexión con la base de datos y el control de acceso
+require 'db_connection.php';
+require 'control.php';
 
 // Verificar si el popup ya fue mostrado en esta sesión. Aquí controlamos que el popup solo aparezca una vez y que no se repita cada vez que entremos.
 if (!isset($_SESSION['popup_mostrado'])) {
@@ -13,9 +21,7 @@ if ($_SESSION['is_admin'] !== 1) {
 }
 
 
-// Incluye los archivos necesarios para la conexión con la base de datos y el control de acceso
-require 'db_connection.php';
-require 'control.php';
+
 
 
 // Verifica si el usuario está autenticado y si tiene permisos de administrador
@@ -200,8 +206,6 @@ while ($row = $result_alerta->fetch_assoc()) {
 }
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
