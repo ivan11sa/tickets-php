@@ -4,16 +4,18 @@
 //  Iniciar la sesión para manejar la autenticación.
 session_start();
 
-//  Incluir conexión a la base de datos y control de acceso.
-require 'db_connection.php';
-require 'control.php';
-
-
 //  Verificar si el usuario ha iniciado sesión, si no, redirigir al login.
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php?error=Debes iniciar sesión.");
     exit();
 }
+
+//  Incluir conexión a la base de datos y control de acceso.
+require 'db_connection.php';
+require 'control.php';
+
+
+
 
 // Obtener el ID del usuario autenticado.
 $user_id = $_SESSION['user_id'];
