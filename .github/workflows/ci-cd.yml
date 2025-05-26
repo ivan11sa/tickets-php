@@ -61,14 +61,14 @@ jobs:
       id: rollout
       run: |
         TAG=$(cat image_tag.txt)
-        kubectl -n "$K8S_NS" set image deployment/nginx-balancer   nginx=$REGISTRY/$IMAGE_NAME:$TAG
-        kubectl -n "$K8S_NS" set image deployment/php-fpm php=$REGISTRY/$IMAGE_NAME:$TAG
-        kubectl -n "$K8S_NS" rollout status deployment/nginx   --timeout=5m
-        kubectl -n "$K8S_NS" rollout status deployment/php-fpm --timeout=5m
+        kubectl -n "$K8S_NS" set image deployment/nginx-balancer   nginx-balancer=$REGISTRY/$IMAGE_NAME:$TAG
+        kubectl -n "$K8S_NS" set image deployment/php-fpm php-fpm=$REGISTRY/$IMAGE_NAME:$TAG
+        kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer   --timeout=5m
+        kubectl -n "$K8S_NS" rollout status deployment/php-deployment --timeout=5m
 
     - name: Rollback if rollout fails
       if: failure()
       run: |
         echo "❌ Rollout failed. Reverting..."
-        kubectl -n "$K8S_NS" rollout undo deployment/nginx
-        kubectl -n "$K8S_NS" rollout undo deployment/php-fpm
+        kubectl -n "$K8S_NS" rollout undo deployment/nginx-balancer
+        kubectl -n "$K8S_NS" rollout undo deployment/php-deployment
