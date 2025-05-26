@@ -56,7 +56,7 @@ $_SESSION['horas']   = $horas;
 $_SESSION['minutos'] = $minutos;
 $_SESSION['segundos'] = $segundos;
 
-// 9) Enviar buffer si estaba abierto pruebas
+// 9) Enviar buffer si estaba abierto pruebass
 if (ob_get_level()) {
     ob_end_flush();
 }
