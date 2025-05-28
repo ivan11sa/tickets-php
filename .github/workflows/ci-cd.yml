@@ -6,7 +6,7 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ivan11sa/proyecto-php-nginx
-  K8S_NS: webapp                    # ← 1)  namespace a usar SIEMPRE
+  K8S_NS: webapp                    
 
 jobs:
 # ────────────────────────────────────────────────────────────────────────────────
