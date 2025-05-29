@@ -73,7 +73,7 @@ jobs:
         kubectl apply -n "$K8S_NS" -f rendered/nginx-balancer.yaml
         kubectl apply -n "$K8S_NS" -f rendered/php-deployment.yaml
         # Espera a que arranquen
-        kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer --timeout=5m
+        kubectl -n "$K8S_NS" rollout status deployment/nginx --timeout=5m
         kubectl -n "$K8S_NS" rollout status deployment/php-deployment  --timeout=5m
 
     - name: Rollback if rollout fails
