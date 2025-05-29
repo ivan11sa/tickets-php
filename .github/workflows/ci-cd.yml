@@ -72,8 +72,8 @@ jobs:
         mkdir -p rendered
 
         # Ajusta rutas a tus archivos reales
-        envsubst < nginx-balancer-deployment.yaml > rendered/nginx-balancer-deployment.yaml
-        envsubst < php-deployment.yaml       > rendered/php-deployment.yaml
+        envsubst < nginx-balancer-deploy.yaml > rendered/nginx-balancer-deployment.yaml
+        envsubst < php-deploy.yaml       > rendered/php-deployment.yaml
 
     - name: Aplicar despliegue en Kubernetes
       run: |
