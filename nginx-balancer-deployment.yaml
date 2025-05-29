@@ -66,7 +66,7 @@ spec:
         - name: conf
           mountPath: /etc/nginx/conf.d
         - name: code
-          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+          mountPath: /var/www/html
       volumes:
       - name: conf
         configMap:
