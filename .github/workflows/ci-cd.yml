@@ -50,21 +50,31 @@ jobs:
 
     - uses: azure/setup-kubectl@v3
 
-    # omite este paso si el runner ya tiene ~/.kube/config correcto
     - name: Configure kubeconfig
       run: |
         mkdir -p $HOME/.kube
         echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-    # 2)  Todas las órdenes kubectl van con -n "$K8S_NS"
-    - name: Rollout both deployments
-      id: rollout
+    # ── Aquí añadimos el renderizado de los YAML ────────────
+    - name: Renderizar manifiestos k8s con tag de imagen
+      env:
+        IMAGE_TAG: ${{ steps.upload_artifact.outputs.image_tag }}  # o usa: $(cat image_tag.txt)
       run: |
-        TAG=$(cat image_tag.txt)
-        kubectl -n "$K8S_NS" set image deployment/nginx-balancer   nginx=$REGISTRY/$IMAGE_NAME:$TAG
-        kubectl -n "$K8S_NS" set image deployment/php-deployment php=$REGISTRY/$IMAGE_NAME:$TAG
-        kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer   --timeout=5m
-        kubectl -n "$K8S_NS" rollout status deployment/php-deployment --timeout=5m
+        # Si guardaste el TAG en image_tag.txt:
+        export IMAGE_TAG=$(cat image_tag.txt)
+
+        # Genera los YAML con el tag correcto
+        envsubst < k8s/nginx-balancer-deploy.yaml > rendered/nginx-balancer.yaml
+        envsubst < k8s/php-deployment.yaml       > rendered/php-deployment.yaml
+
+    # ── Ahora aplicamos los YAML renderizados ────────────────
+    - name: Aplicar despliegue en Kubernetes
+      run: |
+        kubectl apply -n "$K8S_NS" -f rendered/nginx-balancer.yaml
+        kubectl apply -n "$K8S_NS" -f rendered/php-deployment.yaml
+        # Espera a que arranquen
+        kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer --timeout=5m
+        kubectl -n "$K8S_NS" rollout status deployment/php-deployment  --timeout=5m
 
     - name: Rollback if rollout fails
       if: failure()
