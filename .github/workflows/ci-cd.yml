@@ -9,7 +9,7 @@ env:
   K8S_NS: webapp                    
 
 jobs:
-# ────────────────────────────────────────────────────────────────────────────────
+  # ────────────────────────────────────────────────────────────────────────────────
   build:
     runs-on: self-hosted
     permissions:
@@ -17,10 +17,14 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: docker/setup-buildx-action@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - uses: docker/login-action@v3
+    - name: Setup Docker buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker registry
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
@@ -29,51 +33,55 @@ jobs:
       run: |
         TAG=${GITHUB_SHA::7}
         docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
-        docker push  $REGISTRY/$IMAGE_NAME:$TAG
+        docker push $REGISTRY/$IMAGE_NAME:$TAG
         echo "$TAG" > image_tag.txt
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload image tag
+      uses: actions/upload-artifact@v4
       with:
         name: image_tag
         path: image_tag.txt
 
-# ────────────────────────────────────────────────────────────────────────────────
+  # ────────────────────────────────────────────────────────────────────────────────
   deploy:
     runs-on: self-hosted
     needs: build
 
     steps:
-    - uses: actions/download-artifact@v4
+    - name: Download image tag
+      uses: actions/download-artifact@v4
       with:
         name: image_tag
         path: .
 
-    - uses: azure/setup-kubectl@v3
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
 
     - name: Configure kubeconfig
       run: |
         mkdir -p $HOME/.kube
         echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-    # ── Aquí añadimos el renderizado de los YAML ────────────
     - name: Renderizar manifiestos k8s con tag de imagen
-      env:
-        IMAGE_TAG: ${{ steps.upload_artifact.outputs.image_tag }}  # o usa: $(cat image_tag.txt)
       run: |
-        # Si guardaste el TAG en image_tag.txt:
-        export IMAGE_TAG=$(cat image_tag.txt)
+        # Lee el tag generado
+        IMAGE_TAG=$(cat image_tag.txt)
+        export IMAGE_TAG
 
-        # Genera los YAML con el tag correcto
-        envsubst < k8s/nginx-balancer-deploy.yaml > rendered/nginx-balancer.yaml
-        envsubst < k8s/php-deployment.yaml       > rendered/php-deployment.yaml
+        # Crea carpeta para los YAML renderizados
+        mkdir -p rendered
 
-    # ── Ahora aplicamos los YAML renderizados ────────────────
+        # Ajusta rutas a tus archivos reales
+        envsubst < nginx-balancer-deploy.yaml > rendered/nginx-balancer.yaml
+        envsubst < php-deployment.yaml       > rendered/php-deployment.yaml
+
     - name: Aplicar despliegue en Kubernetes
       run: |
         kubectl apply -n "$K8S_NS" -f rendered/nginx-balancer.yaml
         kubectl apply -n "$K8S_NS" -f rendered/php-deployment.yaml
-        # Espera a que arranquen
-        kubectl -n "$K8S_NS" rollout status deployment/nginx --timeout=5m
+
+        # Espera a que arranquen los Deployments correctos
+        kubectl -n "$K8S_NS" rollout status deployment/nginx-balancer --timeout=5m
         kubectl -n "$K8S_NS" rollout status deployment/php-deployment  --timeout=5m
 
     - name: Rollback if rollout fails
