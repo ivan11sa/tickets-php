@@ -59,7 +59,7 @@ spec:
       - name: nginx
         image: docker.io/ivan11sa/proyecto-php-nginx:final
         imagePullPolicy: IfNotPresent
-        # Inyectamos las credenciales de MariaDB
+        # Inyectamos las credenciales de MariaDBs
         env:
         - name: DB_HOST
           value: mariadb.webapp.svc.cluster.local
