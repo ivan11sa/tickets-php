@@ -15,6 +15,18 @@ spec:
       labels:
         app: php
     spec:
+      # 1) InitContainer para poblar el PVC con tu código desde GitHub
+      initContainers:
+      - name: init-code
+        image: alpine/git
+        command: ["sh","-c"]
+        args:
+          - git clone https://github.com/ivan11sa/Sanchez_Acuna_Ivan_Proyecto_IAW.git /mnt/code
+        volumeMounts:
+        - name: code
+          mountPath: /mnt/code
+
+      # 2) Contenedor principal PHP
       containers:
       - name: php
         image: docker.io/ivan11sa/proyecto-php-nginx:final
@@ -28,6 +40,8 @@ spec:
           mountPath: /var/lib/php/sessions
         - name: code
           mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+
+      # 3) Definición de volúmenes
       volumes:
       - name: php-sessions
         persistentVolumeClaim:
