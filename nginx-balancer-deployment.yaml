@@ -18,21 +18,21 @@ data:
         listen 80 default_server;
         server_name tickets-ivan-asir-2025.duckdns.org _;
 
-        root /var/www/html;
+        root /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW;
         index index.php index.html;
 
         location / {
-            try_files $uri $uri/ /index.php?$args;
+          try_files $uri $uri/ /index.php?$args;
         }
 
         location ~ \.php$ {
-            include fastcgi_params;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            fastcgi_pass php-upstream;
+          include fastcgi_params;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          fastcgi_pass php-upstream;
         }
 
         location ~ /\.(?!well-known).* {
-            deny all;
+          deny all;
         }
     }
 
@@ -59,18 +59,33 @@ spec:
       - name: nginx
         image: docker.io/ivan11sa/proyecto-php-nginx:final
         imagePullPolicy: IfNotPresent
+        # Inyectamos las credenciales de MariaDB
+        env:
+        - name: DB_HOST
+          value: mariadb.webapp.svc.cluster.local
+        - name: DB_USER
+          value: root
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: root-password
+
         ports:
         - containerPort: 80
           protocol: TCP
+
         volumeMounts:
         - name: conf
           mountPath: /etc/nginx/conf.d
         - name: code
-          mountPath: /var/www/html
+          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+
       volumes:
       - name: conf
         configMap:
           name: nginx-balancer-conf
+
       - name: code
         persistentVolumeClaim:
           claimName: code-pvc
