@@ -17,6 +17,12 @@ jobs:
       packages: write
 
     steps:
+
+    - name: Debug mostrar estructura del workspace
+      run: |
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+        ls -R "$GITHUB_WORKSPACE"
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -74,7 +80,16 @@ jobs:
         # Ajusta rutas a tus archivos reales
         envsubst < nginx-balancer-deployment.yaml > rendered/nginx-balancer-deployment.yaml
         envsubst < php-deployment.yaml       > rendered/php-deployment.yaml
-    
+        
+    - name: Debug Mostrar rendered en el runner
+      run: |
+        pwd
+        ls -R rendered
+        echo "--- nginx YAML ---"
+        cat rendered/nginx-balancer-deployment.yaml || true
+        echo "--- php YAML ---"
+        cat rendered/php-deployment.yaml || true
+
     - name: Debug mostrar contenido de los YAML renderizados
       run: |
         echo "=== rendered/nginx-balancer-deployment.yaml ==="
