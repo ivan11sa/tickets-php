@@ -74,6 +74,14 @@ jobs:
         # Ajusta rutas a tus archivos reales
         envsubst < nginx-balancer-deployment.yaml > rendered/nginx-balancer-deployment.yaml
         envsubst < php-deployment.yaml       > rendered/php-deployment.yaml
+    
+    - name: Debug mostrar contenido de los YAML renderizados
+      run: |
+        echo "=== rendered/nginx-balancer-deployment.yaml ==="
+        cat rendered/nginx-balancer-deployment.yaml || true
+        echo ""
+        echo "=== rendered/php-deployment.yaml ==="
+        cat rendered/php-deployment.yaml || true
 
     - name: Aplicar despliegue en Kubernetes
       run: |
