@@ -72,12 +72,12 @@ jobs:
         mkdir -p rendered
 
         # Ajusta rutas a tus archivos reales
-        envsubst < nginx-balancer-deploy.yaml > rendered/nginx-balancer.yaml
+        envsubst < nginx-balancer-deployment.yaml > rendered/nginx-balancer-deployment.yaml
         envsubst < php-deployment.yaml       > rendered/php-deployment.yaml
 
     - name: Aplicar despliegue en Kubernetes
       run: |
-        kubectl apply -n "$K8S_NS" -f rendered/nginx-balancer.yaml
+        kubectl apply -n "$K8S_NS" -f rendered/nginx-balancer-deployment.yaml
         kubectl apply -n "$K8S_NS" -f rendered/php-deployment.yaml
 
         # Espera a que arranquen los Deployments correctos
