@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+  namespace: webapp
+  labels:
+    app: php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php
+        image: docker.io/ivan11sa/proyecto-php-nginx:final
+        imagePullPolicy: IfNotPresent
+        workingDir: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: php-sessions
+          mountPath: /var/lib/php/sessions
+        - name: code
+          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+      volumes:
+      - name: php-sessions
+        persistentVolumeClaim:
+          claimName: php-sessions-pvc
+      - name: code
+        persistentVolumeClaim:
+          claimName: code-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+  namespace: webapp
+spec:
+  selector:
+    app: php
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: ClusterIP

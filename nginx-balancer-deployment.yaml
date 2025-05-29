@@ -1,0 +1,76 @@
+# nginx-balancer-deploy.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-balancer-conf
+  namespace: webapp
+data:
+  default.conf: |
+    error_log  /dev/stderr  debug;
+    access_log /dev/stdout;
+
+    upstream php-upstream {
+        server php-service:80;
+    }
+
+    server {
+        listen 80 default_server;
+        server_name tickets-ivan-asir-2025.duckdns.org _;
+
+        root /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW;
+        index index.php index.html;
+
+        location / {
+            try_files $uri $uri/ /index.php?$args;
+        }
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_pass php-upstream;
+        }
+
+        location ~ /\.(?!well-known).* {
+            deny all;
+        }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-balancer
+  namespace: webapp
+  labels:
+    app: nginx-balancer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-balancer
+  template:
+    metadata:
+      labels:
+        app: nginx-balancer
+    spec:
+      containers:
+      - name: nginx
+        image: docker.io/ivan11sa/proyecto-php-nginx:final
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: conf
+          mountPath: /etc/nginx/conf.d
+        - name: code
+          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+      volumes:
+      - name: conf
+        configMap:
+          name: nginx-balancer-conf
+      - name: code
+        persistentVolumeClaim:
+          claimName: code-pvc
