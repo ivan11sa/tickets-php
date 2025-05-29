@@ -18,7 +18,7 @@ data:
         listen 80 default_server;
         server_name tickets-ivan-asir-2025.duckdns.org _;
 
-        root /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW;
+        root /var/www/html;
         index index.php index.html;
 
         location / {
