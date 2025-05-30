@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+  namespace: webapp
+  labels:
+    app: php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php-fpm
+        image: docker.io/ivan11sa/proyecto-php-nginx:any
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DB_HOST
+          value: mariadb.webapp.svc.cluster.local
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: root-password
+        - name: DB_NAME
+          value: gestion_incidencias
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: php-sessions
+          mountPath: /var/lib/php/sessions
+        - name: code
+          mountPath: /var/www/html
+      volumes:
+      - name: php-sessions
+        persistentVolumeClaim:
+          claimName: php-sessions-pvc
+      - name: code
+        persistentVolumeClaim:
+          claimName: code-pvc

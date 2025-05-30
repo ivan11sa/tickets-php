@@ -1,43 +1,3 @@
-# nginx-balancer-deploy.yaml
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nginx-balancer-conf
-  namespace: webapp
-data:
-  default.conf: |
-    error_log  /dev/stderr  debug;
-    access_log /dev/stdout;
-
-    upstream php-upstream {
-        server php-service:80;
-    }
-
-    server {
-        listen 80 default_server;
-        server_name tickets-ivan-asir-2025.duckdns.org _;
-
-        root /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW;
-        index index.php index.html;
-
-        location / {
-          try_files $uri $uri/ /index.php?$args;
-        }
-
-        location ~ \.php$ {
-          include fastcgi_params;
-          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-          fastcgi_pass php-upstream;
-        }
-
-        location ~ /\.(?!well-known).* {
-          deny all;
-        }
-    }
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,6 +10,11 @@ spec:
   selector:
     matchLabels:
       app: nginx-balancer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   template:
     metadata:
       labels:
@@ -59,7 +24,6 @@ spec:
       - name: nginx
         image: nginx:1.27-alpine
         imagePullPolicy: IfNotPresent
-        # Inyectamos las credenciales de MariaDBs
         env:
         - name: DB_HOST
           value: mariadb.webapp.svc.cluster.local
@@ -70,11 +34,8 @@ spec:
             secretKeyRef:
               name: mariadb-root
               key: root-password
-
         ports:
         - containerPort: 80
-          protocol: TCP
-
         volumeMounts:
         - name: conf
           mountPath: /etc/nginx/conf.d
@@ -84,7 +45,6 @@ spec:
       - name: conf
         configMap:
           name: nginx-balancer-conf
-
       - name: code
         persistentVolumeClaim:
           claimName: code-pvc

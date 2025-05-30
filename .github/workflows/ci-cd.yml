@@ -1,3 +1,4 @@
+# .github/workflows/ci-cd.yaml
 name: CI/CD Pipeline
 on:
   push:
@@ -6,7 +7,8 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ivan11sa/proyecto-php-nginx
-  K8S_NS: webapp                    
+  IMAGE_TAG: ${{ github.sha }}
+  K8S_NS: webapp
 
 jobs:
   build:
@@ -19,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Docker buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker registry
@@ -28,47 +30,34 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-#      - name: Build & Push PHP-FPM Image
-#        run: |
-#          TAG=${GITHUB_SHA::7}
-#          docker build -t $REGISTRY/$IMAGE_NAME:php-$TAG -f Dockerfile .
-#          docker push $REGISTRY/$IMAGE_NAME:php-$TAG
-#          echo "PHP_TAG=$TAG" >> image_tags.env
+      - name: Build & Push Image
+        run: |
+          TAG=${IMAGE_TAG::7}
+          docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
+          docker push $REGISTRY/$IMAGE_NAME:$TAG
+          echo "IMAGE_TAG=$TAG" > image_tag.env
 
-#      - name: Build & Push Nginx Image
-#        run: |
-#          TAG=${GITHUB_SHA::7}
-#          docker build -t $REGISTRY/$IMAGE_NAME:nginx-$TAG -f Dockerfile .
-#          docker push $REGISTRY/$IMAGE_NAME:nginx-$TAG
-#          echo "NGINX_TAG=$TAG" >> image_tags.env
-
-      - name: Upload image tags
+      - name: Upload image tag
         uses: actions/upload-artifact@v4
         with:
-          name: image_tags
-          path: image_tags.env
+          name: image-tag
+          path: image_tag.env
 
   deploy:
     runs-on: self-hosted
     needs: build
 
     steps:
-#      - name: Download image tags
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: image_tags
-#          path: .
+      - name: Download image tag
+        uses: actions/download-artifact@v4
+        with:
+          name: image-tag
+          path: .
 
-#      - name: Debug lista el contenido de image_tags.env
-#        run: |
-#          echo "Contenido de image_tags.env:"
-#          cat image_tags.env
-
-#      - name: Load tags into env
-#        run: |
-#          source image_tags.env
-#          echo "Using PHP_TAG=$PHP_TAG"
-#          echo "Using NGINX_TAG=$NGINX_TAG"
+      - name: Load IMAGE_TAG
+        run: |
+          source image_tag.env
+          echo "Deploying $REGISTRY/$IMAGE_NAME:$IMAGE_TAG to $K8S_NS"
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
@@ -78,28 +67,29 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-#      - name: Rolling update on Kubernetes
-#        run: |
-          # Actualiza PHP-FPM deployment
-#          source image_tags.env
-          # Actualiza PHP-FPM deployment
-#          kubectl -n $K8S_NS set image deployment/php-deployment \
-#            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
-
-#          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
-#          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
-
-      - name: Apply Manifests
+      - name: Apply Kubernetes manifests
         run: |
-          kubectl -n $K8S_NS apply -f php-deployment.yaml
-          kubectl -n $K8S_NS apply -f nginx-balancer-deployment-clean.yaml
+          # Aplica tus manifiestos (sin tag en la imagen)
+          kubectl -n $K8S_NS apply -f k8s/php-deployment.yaml
+          kubectl -n $K8S_NS apply -f k8s/nginx-balancer-deployment.yaml
+          kubectl -n $K8S_NS apply -f k8s/nginx-balancer-configmap.yaml
 
+      - name: Update deployments to new image
+        run: |
+          # Inyecta el tag recién construido
+          kubectl -n $K8S_NS set image deployment/php-deployment \
+            php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          kubectl -n $K8S_NS set image deployment/nginx-balancer \
+            nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+      - name: Wait for rollout
+        run: |
           kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
           kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
 
-      - name: Rollback if rollout fails
+      - name: Rollback on failure
         if: failure()
         run: |
           echo "❌ Rollout failed. Undoing..."
           kubectl -n $K8S_NS rollout undo deployment/php-deployment
-#          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
+          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
