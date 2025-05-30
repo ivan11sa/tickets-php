@@ -2,12 +2,12 @@
 
 FROM php:8.3-fpm
 
-# 1) Instala Nginx, Supervisor y mysqli
+# 1) Instala Nginx, Supervisor y la librería de MariaDB para compilar mysqli
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          nginx \
          supervisor \
-         libmysqlclient-dev \
+         libmariadb-dev-compat \
     && docker-php-ext-install mysqli pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
