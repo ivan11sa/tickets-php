@@ -31,4 +31,5 @@ RUN echo "session.save_path = /var/lib/php/sessions" \
 
 # 7) Exponer HTTP y arrancar ambos servicios
 EXPOSE 80
+RUN sed -i 's|^listen = .*|listen = 0.0.0.0:9000|' /usr/local/etc/php-fpm.d/www.conf
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
