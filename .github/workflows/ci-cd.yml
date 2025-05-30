@@ -59,6 +59,11 @@ jobs:
           name: image_tags
           path: .
 
+      - name: Debug lista el contenido de image_tags.env
+        run: |
+          echo "Contenido de image_tags.env:"
+          cat image_tags.env
+
       - name: Load tags into env
         run: |
           source image_tags.env
