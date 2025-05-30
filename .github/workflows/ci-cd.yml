@@ -68,7 +68,7 @@ jobs:
         run: |
           source image_tags.env
           echo "Using PHP_TAG=$PHP_TAG"
-          echo "Using NGINX_TAG=$NGINX_TAG"
+#          echo "Using NGINX_TAG=$NGINX_TAG"
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
@@ -84,19 +84,14 @@ jobs:
           source image_tags.env
           # Actualiza PHP-FPM deployment
           kubectl -n $K8S_NS set image deployment/php-deployment \
-          php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
-          
-          # Actualiza Nginx balancer deployment
-          kubectl -n $K8S_NS set image deployment/nginx-balancer \
-            nginx=$REGISTRY/$IMAGE_NAME:nginx-$NGINX_TAG
-
-          # Espera a que terminen los rolling updates
+            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
+            
           kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
-          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
+#          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
 
       - name: Rollback if rollout fails
         if: failure()
         run: |
           echo "❌ Rollout failed. Undoing..."
           kubectl -n $K8S_NS rollout undo deployment/php-deployment
-          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
+#          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
