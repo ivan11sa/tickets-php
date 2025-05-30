@@ -81,9 +81,11 @@ jobs:
       - name: Rolling update on Kubernetes
         run: |
           # Actualiza PHP-FPM deployment
+          source image_tags.env
+          # Actualiza PHP-FPM deployment
           kubectl -n $K8S_NS set image deployment/php-deployment \
-            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
-
+          php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
+          
           # Actualiza Nginx balancer deployment
           kubectl -n $K8S_NS set image deployment/nginx-balancer \
             nginx=$REGISTRY/$IMAGE_NAME:nginx-$NGINX_TAG
