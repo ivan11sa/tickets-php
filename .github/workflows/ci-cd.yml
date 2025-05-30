@@ -1,4 +1,4 @@
-# .github/workflows/ci-cd.yamls
+# .github/workflows/ci-cd.yaml
 name: CI/CD Pipeline
 on:
   push:
@@ -31,6 +31,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build & Push Image
+        shell: bash
         run: |
           TAG=${IMAGE_TAG::7}
           docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
@@ -55,6 +56,7 @@ jobs:
           path: .
 
       - name: Load IMAGE_TAG
+        shell: bash
         run: |
           source image_tag.env
           echo "Deploying $REGISTRY/$IMAGE_NAME:$IMAGE_TAG to $K8S_NS"
@@ -63,25 +65,26 @@ jobs:
         uses: azure/setup-kubectl@v3
 
       - name: Configure kubeconfig
+        shell: bash
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Update PHP Deployment image
+      - name: Patch PHP deployment
         run: |
           kubectl -n $K8S_NS set image deployment/php-deployment \
             php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
+          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=5m
 
-      - name: Update Nginx Deployment image
+      - name: Patch Nginx deployment
         run: |
           kubectl -n $K8S_NS set image deployment/nginx-balancer \
             nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
+          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=5m
 
       - name: Rollback on failure
         if: failure()
         run: |
-          echo "❌ Rollout failed. Undoing..."
+          echo "❌ Rollout failed — undoing"
           kubectl -n $K8S_NS rollout undo deployment/php-deployment
           kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
