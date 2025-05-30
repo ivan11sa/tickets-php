@@ -3,45 +3,24 @@ kind: Deployment
 metadata:
   name: php-deployment
   namespace: webapp
-  labels:
-    app: php
 spec:
   replicas: 2
   selector:
-    matchLabels:
-      app: php
+    matchLabels: { app: php }
   template:
     metadata:
-      labels:
-        app: php
+      labels: { app: php }
     spec:
-      # 1) InitContainer para poblar el PVC con tu código desde el repo público
-      initContainers:
-      - name: init-code
-        image: alpine/git
-        command: ["sh","-c"]
-        args:
-          - git clone https://github.com/ivan11sa/tickets-php.git /mnt/code
-        volumeMounts:
-        - name: code
-          mountPath: /mnt/code
-
-      # 2) Contenedor principal PHP
       containers:
-      - name: php
-        image: docker.io/ivan11sa/proyecto-php-nginx:final
-        imagePullPolicy: IfNotPresent
-        workingDir: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
+      - name: php-fpm
+        image: php:8.3-fpm
         ports:
-        - containerPort: 80
-          protocol: TCP
+        - containerPort: 9000
         volumeMounts:
-        - name: php-sessions
-          mountPath: /var/lib/php/sessions
-        - name: code
-          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
-
-      # 3) Define los volúmenes
+        - mountPath: /var/lib/php/sessions
+          name: php-sessions
+        - mountPath: /var/www/html
+          name: code
       volumes:
       - name: php-sessions
         persistentVolumeClaim:
@@ -59,7 +38,7 @@ spec:
   selector:
     app: php
   ports:
-  - name: http
-    port: 80
-    targetPort: 80
+  - name: fpm
+    port: 9000
+    targetPort: 9000
   type: ClusterIP

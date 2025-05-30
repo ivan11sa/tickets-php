@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: docker.io/ivan11sa/proyecto-php-nginx:final
+        image: nginx:1.27-alpine
         imagePullPolicy: IfNotPresent
         # Inyectamos las credenciales de MariaDBs
         env:
@@ -79,8 +79,7 @@ spec:
         - name: conf
           mountPath: /etc/nginx/conf.d
         - name: code
-          mountPath: /var/www/html/Sanchez_Acuna_Ivan_Proyecto_IAW
-
+          mountPath: /var/www/html
       volumes:
       - name: conf
         configMap:
