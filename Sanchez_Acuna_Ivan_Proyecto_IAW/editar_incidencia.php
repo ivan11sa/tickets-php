@@ -7,7 +7,7 @@ session_start();
 
 // Incluir los archivos necesarios para la conexión a la base de datos y el control de acceso.
 require 'db_connection.php'; // Archivo que gestiona la conexión con la base de datos.
-require 'control.php'; // Archivo que maneja los permisos y control de acceso.
+require 'control.php'; // Archivo quee maneja los permisos y control de acceso.
 
 // Verificar si el usuario ha iniciado sesión, si no, redirigirlo al login con un mensaje de error.
 if (!isset($_SESSION['user_id'])) {
