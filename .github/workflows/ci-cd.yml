@@ -28,12 +28,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push PHP-FPM Image
-        run: |
-          TAG=${GITHUB_SHA::7}
-          docker build -t $REGISTRY/$IMAGE_NAME:php-$TAG -f Dockerfile .
-          docker push $REGISTRY/$IMAGE_NAME:php-$TAG
-          echo "PHP_TAG=$TAG" >> image_tags.env
+#      - name: Build & Push PHP-FPM Image
+#        run: |
+#          TAG=${GITHUB_SHA::7}
+#          docker build -t $REGISTRY/$IMAGE_NAME:php-$TAG -f Dockerfile .
+#          docker push $REGISTRY/$IMAGE_NAME:php-$TAG
+#          echo "PHP_TAG=$TAG" >> image_tags.env
 
 #      - name: Build & Push Nginx Image
 #        run: |
@@ -53,21 +53,21 @@ jobs:
     needs: build
 
     steps:
-      - name: Download image tags
-        uses: actions/download-artifact@v4
-        with:
-          name: image_tags
-          path: .
+#      - name: Download image tags
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: image_tags
+#          path: .
 
-      - name: Debug lista el contenido de image_tags.env
-        run: |
-          echo "Contenido de image_tags.env:"
-          cat image_tags.env
+#      - name: Debug lista el contenido de image_tags.env
+#        run: |
+#          echo "Contenido de image_tags.env:"
+#          cat image_tags.env
 
-      - name: Load tags into env
-        run: |
-          source image_tags.env
-          echo "Using PHP_TAG=$PHP_TAG"
+#      - name: Load tags into env
+#        run: |
+#          source image_tags.env
+#          echo "Using PHP_TAG=$PHP_TAG"
 #          echo "Using NGINX_TAG=$NGINX_TAG"
 
       - name: Setup kubectl
@@ -78,16 +78,24 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Rolling update on Kubernetes
-        run: |
+#      - name: Rolling update on Kubernetes
+#        run: |
           # Actualiza PHP-FPM deployment
-          source image_tags.env
+#          source image_tags.env
           # Actualiza PHP-FPM deployment
-          kubectl -n $K8S_NS set image deployment/php-deployment \
-            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
-            
-          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
+#          kubectl -n $K8S_NS set image deployment/php-deployment \
+#            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG
+
+#          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
 #          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
+
+      - name: Apply Manifests
+        run: |
+          kubectl -n $K8S_NS apply -f php-deployment.yaml
+          kubectl -n $K8S_NS apply -f nginx-balancer-deployment-clean.yaml
+
+          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
+          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
 
       - name: Rollback if rollout fails
         if: failure()
