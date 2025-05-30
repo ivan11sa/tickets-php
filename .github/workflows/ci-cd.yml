@@ -6,7 +6,6 @@ on:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ivan11sa/proyecto-php-nginx
-  IMAGE_NAME_NGINX: ivan11sa/proyecto-php-nginx   # o tu imagen distinta de nginx-balancer
   K8S_NS: webapp                    
 
 jobs:
@@ -17,7 +16,8 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
@@ -28,24 +28,24 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & push PHP image
+      - name: Build & Push Image
         run: |
+          # Genera un tag único por commit
           TAG=${GITHUB_SHA::7}
-          docker build -t $REGISTRY/$IMAGE_NAME:php-$TAG -f Dockerfile.php .
-          docker push $REGISTRY/$IMAGE_NAME:php-$TAG
-          echo "PHP_TAG=$TAG" >> image_tag.env
 
-      - name: Build & push Nginx image
-        run: |
-          TAG=${GITHUB_SHA::7}
-          docker build -t $REGISTRY/$IMAGE_NAME:nginx-$TAG -f Dockerfile.nginx .
-          docker push $REGISTRY/$IMAGE_NAME:nginx-$TAG
-          echo "NGINX_TAG=$TAG" >> image_tag.env
+          # Construye usando el Dockerfile en la raíz
+          docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
 
-      - name: Upload image tags
+          # Sube la imagen
+          docker push $REGISTRY/$IMAGE_NAME:$TAG
+
+          # Guarda el tag para el siguiente job
+          echo "IMAGE_TAG=$TAG" > image_tag.env
+
+      - name: Upload image tag
         uses: actions/upload-artifact@v4
         with:
-          name: image_tags
+          name: image_tag
           path: image_tag.env
 
   deploy:
@@ -53,10 +53,10 @@ jobs:
     needs: build
 
     steps:
-      - name: Download image tags
+      - name: Download image tag
         uses: actions/download-artifact@v4
         with:
-          name: image_tags
+          name: image_tag
           path: .
 
       - name: Setup kubectl
@@ -67,23 +67,20 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Load tags into env
+      - name: Load tag into env
         run: |
           source image_tag.env
-          echo "PHP_TAG=$PHP_TAG"
-          echo "NGINX_TAG=$NGINX_TAG"
+          echo "Deploying image tag: $IMAGE_TAG"
 
       - name: Rolling update on Kubernetes
         run: |
-          # Actualiza la imagen del Deployment php-deployment
+          # Actualiza PHP-FPM
           kubectl -n $K8S_NS set image deployment/php-deployment \
-            php-fpm=$REGISTRY/$IMAGE_NAME:php-$PHP_TAG \
-            --record
+            php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG --record
 
-          # Actualiza la imagen del Deployment nginx-balancer
+          # Actualiza Nginx (supervisor + PHP-FPM)
           kubectl -n $K8S_NS set image deployment/nginx-balancer \
-            nginx=$REGISTRY/$IMAGE_NAME:nginx-$NGINX_TAG \
-            --record
+            nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG --record
 
           # Espera a que terminen los rolling updates
           kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m

@@ -1,7 +1,8 @@
-# 1) Base: PHP-FPM oficial
+# Dockerfile
+
 FROM php:8.3-fpm
 
-# 2) Instalar Nginx, Supervisor y extensiones PHP necesarias
+# 1) Instala Nginx, Supervisor y mysqli
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          nginx \
@@ -10,27 +11,24 @@ RUN apt-get update \
     && docker-php-ext-install mysqli pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
-# 3) Crear carpetas necesarias y ajustar permisos
+# 2) Crear carpetas y permisos
 RUN mkdir -p /var/run/nginx /var/log/nginx /var/lib/php/sessions \
     && chown -R www-data:www-data /var/lib/php/sessions
 
-# 4) Copiar código de la aplicación
+# 3) Copiar código de la aplicación
 COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-# 5) Copiar configuración de Nginx
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-RUN rm -f /etc/nginx/conf.d/default.conf.default
+# 4) Configuración de Nginx (toma default.conf de la raíz)
+COPY default.conf /etc/nginx/conf.d/default.conf :contentReference[oaicite:0]{index=0}
 
-# 6) Copiar configuración de Supervisor
-COPY docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+# 5) Configuración de Supervisor
+COPY supervisord.conf /etc/supervisor/supervisord.conf :contentReference[oaicite:1]{index=1}
 
-# 7) Ajustes PHP
+# 6) Ajuste de sesiones PHP
 RUN echo "session.save_path = /var/lib/php/sessions" \
     >> /usr/local/etc/php/conf.d/99-sessions.ini
 
-# 8) Exponer puerto HTTP
+# 7) Exponer HTTP y arrancar ambos servicios
 EXPOSE 80
-
-# 9) Arrancar Supervisord
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
