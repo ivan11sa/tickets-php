@@ -67,24 +67,16 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Apply Kubernetes manifests
+      - name: Update PHP Deployment image
         run: |
-          # Aplica tus manifiestos (sin tag en la imagen)
-          kubectl -n $K8S_NS apply -f k8s/php-deployment.yaml
-          kubectl -n $K8S_NS apply -f k8s/nginx-balancer-deployment.yaml
-          kubectl -n $K8S_NS apply -f k8s/nginx-balancer-configmap.yaml
-
-      - name: Update deployments to new image
-        run: |
-          # Inyecta el tag recién construido
           kubectl -n $K8S_NS set image deployment/php-deployment \
             php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
+
+      - name: Update Nginx Deployment image
+        run: |
           kubectl -n $K8S_NS set image deployment/nginx-balancer \
             nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-
-      - name: Wait for rollout
-        run: |
-          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=3m
           kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=3m
 
       - name: Rollback on failure
