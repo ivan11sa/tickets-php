@@ -19,11 +19,11 @@ RUN mkdir -p /var/run/nginx /var/log/nginx /var/lib/php/sessions \
 COPY . /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-# 4) Configuración de Nginx (toma default.conf de la raíz)
-COPY default.conf /etc/nginx/conf.d/default.conf :contentReference[oaicite:0]{index=0}
+# 4) Configuración de Nginx
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # 5) Configuración de Supervisor
-COPY supervisord.conf /etc/supervisor/supervisord.conf :contentReference[oaicite:1]{index=1}
+COPY supervisord.conf /etc/supervisor/supervisord.conf
 
 # 6) Ajuste de sesiones PHP
 RUN echo "session.save_path = /var/lib/php/sessions" \
