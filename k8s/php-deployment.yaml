@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: php-fpm
-        image: docker.io/ivan11sa/proyecto-php-nginx:any
+        image: docker.io/ivan11sa/proyecto-php-nginx:latest
         imagePullPolicy: IfNotPresent
         env:
         - name: DB_HOST
