@@ -33,7 +33,7 @@ jobs:
       - name: Build & Push Image
         shell: bash
         run: |
-          TAG=${IMAGE_TAG::7}
+          TAG=$IMAGE_TAG
           docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
           docker push $REGISTRY/$IMAGE_NAME:$TAG
           echo "IMAGE_TAG=$TAG" > image_tag.env
@@ -70,13 +70,15 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.K8S_CONFIG }}" | base64 -d > $HOME/.kube/config
 
-      - name: Patch PHP deployment
+      - name: Patch PHP Deployment image
+        shell: bash
         run: |
           kubectl -n $K8S_NS set image deployment/php-deployment \
             php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
           kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=5m
 
-      - name: Patch Nginx deployment
+      - name: Patch Nginx Deployment image
+        shell: bash
         run: |
           kubectl -n $K8S_NS set image deployment/nginx-balancer \
             nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
@@ -84,6 +86,7 @@ jobs:
 
       - name: Rollback on failure
         if: failure()
+        shell: bash
         run: |
           echo "❌ Rollout failed — undoing"
           kubectl -n $K8S_NS rollout undo deployment/php-deployment
