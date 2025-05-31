@@ -1,5 +1,6 @@
 # .github/workflows/ci-cd.yaml
 name: CI/CD Pipeline
+
 on:
   push:
     branches: [ main ]
@@ -59,7 +60,7 @@ jobs:
         shell: bash
         run: |
           source image_tag.env
-          echo "Deploying $REGISTRY/$IMAGE_NAME:$IMAGE_TAG to $K8S_NS"
+          echo "Deploying $REGISTRY/$IMAGE_NAME:$IMAGE_TAG to namespace $K8S_NS"
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
