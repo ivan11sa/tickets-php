@@ -97,5 +97,5 @@ jobs:
         shell: bash
         run: |
           echo "❌ Rollout failed — undoing"
-          kubectl -n $K8S_NS rollout undo deployment/php-deployment
-          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
+          kubectl -n $K8S_NS rollout undo deployment/php
+          kubectl -n $K8S_NS rollout undo deployment/nginx
