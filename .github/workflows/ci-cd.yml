@@ -1,4 +1,4 @@
-# .github/workflows/ci-cd.yaml
+# .github/workflows/ci-cd.yaml.
 name: CI/CD Pipeline
 
 on:
@@ -81,16 +81,16 @@ jobs:
       - name: Patch PHP Deployment image
         shell: bash
         run: |
-          kubectl -n $K8S_NS set image deployment/php-deployment \
-            php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=5m
+          kubectl -n $K8S_NS set image deployment/php \
+            php=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          kubectl -n $K8S_NS rollout status deployment/php --timeout=5m
 
       - name: Patch Nginx Deployment image
         shell: bash
         run: |
-          kubectl -n $K8S_NS set image deployment/nginx-balancer \
+          kubectl -n $K8S_NS set image deployment/nginx \
             nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=5m
+          kubectl -n $K8S_NS rollout status deployment/nginx --timeout=5m
 
       - name: Rollback on failure
         if: failure()
