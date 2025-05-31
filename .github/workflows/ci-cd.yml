@@ -88,9 +88,9 @@ jobs:
       - name: Patch Nginx Deployment image
         shell: bash
         run: |
-          kubectl -n $K8S_NS set image deployment/nginx \
+          kubectl -n $K8S_NS set image deployment/nginx-balancer \
             nginx=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          kubectl -n $K8S_NS rollout status deployment/nginx --timeout=5m
+          kubectl -n $K8S_NS rollout status deployment/nginx-balancer --timeout=5m
 
       - name: Rollback on failure
         if: failure()
@@ -98,4 +98,4 @@ jobs:
         run: |
           echo "❌ Rollout failed — undoing"
           kubectl -n $K8S_NS rollout undo deployment/php-deployment
-          kubectl -n $K8S_NS rollout undo deployment/nginx
+          kubectl -n $K8S_NS rollout undo deployment/nginx-balancer
