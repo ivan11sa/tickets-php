@@ -1,10 +1,15 @@
-# Dockerfile (PHP-FPM only)
+# Dockerfile (PHP-FPM with debug tools)
 
 FROM php:8.3-fpm
 
-# 1) Instala la librería de MariaDB para mysqli y PDO
+# 1) Instala librerías necesarias para mysqli, PDO y herramientas debug
 RUN apt-get update \
- && apt-get install -y --no-install-recommends libmariadb-dev-compat \
+ && apt-get install -y --no-install-recommends \
+    libmariadb-dev-compat \
+    curl \
+    net-tools \
+    iputils-ping \
+    procps \
  && docker-php-ext-install mysqli pdo pdo_mysql \
  && rm -rf /var/lib/apt/lists/*
 
