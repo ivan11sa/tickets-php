@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           kubectl -n $K8S_NS set image deployment/php-deployment \
-            php=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+            php-fpm=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
           kubectl -n $K8S_NS rollout status deployment/php-deployment --timeout=5m
 
       - name: Patch Nginx Deployment image
