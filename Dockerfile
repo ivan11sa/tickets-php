@@ -14,6 +14,10 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
+
+# Copia nuestro default.conf al directorio de configuración
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 # 2️⃣ Crea la carpeta de sesiones y fija permisos
 RUN mkdir -p /var/lib/php/sessions \
  && chown -R www-data:www-data /var/lib/php/sessions
